@@ -1,0 +1,66 @@
+services:
+  frontend:
+    container_name: react-frontend
+    build:
+      context: ./frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+  backend:
+    container_name: dotnet-backend
+    build:
+      context: ./backend
+    environment:
+      ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=mydatabase;Username=myuser;Password=mysecretpassword
+    depends_on:
+      - db
+      - keycloak
+    ports:
+      - "5269:5269"
+
+  db:
+    container_name: postgres-db
+    build:
+      context: ./db
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: mydatabase
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  keycloak:
+      image: quay.io/keycloak/keycloak:26.4.7
+      container_name: keycloak
+      environment:
+        # Database Config (Quarkus format)
+        KC_DB: postgres
+        KC_DB_URL: jdbc:postgresql://db:5432/mydatabase
+        KC_DB_USERNAME: myuser
+        KC_DB_PASSWORD: mysecretpassword
+        # Allows http://keycloak:8080 from other containers
+        KC_HOSTNAME_STRICT: "false"
+        # Disables strict HTTPS enforcement
+        KC_HOSTNAME_STRICT_HTTPS: "false" 
+        KC_HTTP_ENABLED: "true"
+        
+      # "start-dev" enables dev mode
+      # "--import-realm" tells Keycloak to look in /opt/keycloak/data/import
+      command: start-dev --import-realm
+      ports:
+        - "8080:8080"
+      depends_on:
+        - db
+      volumes:
+        - keycloak_data:/opt/keycloak/data
+        # Mount local json files to the container's import folder
+        - ./react-realm-realm.json:/opt/keycloak/data/import/react-realm-realm.json
+        - ./master-realm.json:/opt/keycloak/data/import/master-realm.json
+
+volumes:
+  pgdata:
+  keycloak_data:
