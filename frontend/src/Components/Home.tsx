@@ -143,7 +143,7 @@ function Home() {
   }, []);
 
   return (
-    <div className="App">
+    <div className="Home">
       <div>
         <a
           href="https://github.com/UofA-BAJA/2025-2026-firmware/tree/main"
@@ -152,7 +152,7 @@ function Home() {
           <img src="/baja_logo.jpg" className="logo" alt="Baja logo" />
         </a>
       </div>
-      <h1>Line Graph Test</h1>
+      <h1>SVG Line Graph Test</h1>
 
       <BarChart width={500} height={300} data={temps}>
         <CartesianGrid strokeDasharray="3 3" />
