@@ -1,0 +1,48 @@
+@rootURL = http://localhost:5269
+
+GET {{rootURL}}/weatherforecast/
+Accept: application/json
+
+###
+GET {{rootURL}}/api/books
+Accept: application/json
+
+###
+GET {{rootURL}}/api/books/2
+Accept: application/json
+
+###
+POST {{rootURL}}/api/books
+Content-Type: application/json
+{
+    "id": 11,
+    "title": "Hello World!",
+    "author": "Nile Young",
+    "yearPublished": 2026
+}
+
+### get all belts
+GET http://localhost:5269/Belts
+Accept: application/json
+Authorization: Bearer Mzg5Mzg2MTUtYTYyZS0wOGU3LWU2YzAtNDFiZjE2MjVkY2YyLjdMb2c1MDhDaGZnblVNRjBOOEl5TllEUEZMc1VNN1pDVFQxXzdqY1A5S0ZaMGJVSmZrX1VJc1ZmRnUyNFVnX0VBb3NxeHZTNmJKeDVzMWtORTBLTFBn; KEYCLOAK_SESSION=Z-HI7L2K6ChCXFbfB7dbeRBMvL2LtOBOwegKVMXveHc; KC_RESTART=eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..J6ZPQNn2M5Q44QyJmQaf6w.nD9hxMknGZZsllMv1bv2YWkBOQ-ekGRvW-UVxkdt7f2NxMYA4dxDdqjFHdWGkz79Ip8DkcFpxgmvMrAMXXxHODHcMbuzwxKxfx0v0776a-qZ8dU6vuAWiKJPUd8awINF7kQTWLQ_pT7aqCdP7nu4-XUpjocLCFflbWN8FG5HBmKwDOh31WLdgZdO1SkzD-EiQxDY32cJhuGH6s5gTZ4zTiOJo6QlJj9uRaZISnHXrZuW0pui1pd5K2ioi-ZfU4BDnofwdWB2yy6iKK342SSAAbEPrYruZWnLPAT5HZmiE0oBZqiLYc_P4JcL-AJR2TxzPBWNB7MVrHaAw7_vVnZYTVNfNQ21GqnW0tZn9RYDJQ5xhXVeTRXvS3_rNI3ljUA8IMvmqELlQ_fWgsL_JghEBbrQ4IKQOND3AXPx1fBtlGXPTBO6Gssa_t__G6USqMUxoVN-1PoOAO0ZBoUj2awt3wJ6NznKpPfeSBwYFSKKdx3PbFICfRkA9-NXqI4KY-rAGL_OihThcwgUemGnYpvfqSpqXjtFehwip9VXHrgz3DICQtVlg6w-I52yMTNWHu7pEyrJxbWNu-3ncRNcjwLm4S0ZLUBxV2pbGSfwXzvRQR1iiEIHae7N5zGCmG4tNSxPUwyUTkdjZeWu17HLp0dNaEO9n7s2LflexDTCCXtNrqYIvUfTsAoRi1bED5xL0YsDBQ-7joiCH-IFmnXOVc9VkGE3v7mMldJ6IGiiUULitz61xzOp9AgIbHew7eGTqkQqNm-jp0ipY_kD5mmRYT2cvdW_Ln7n7MmCfwV6PntFNcOlEaKTLxX73-KkmCxsI12cJD_0SAzHGhXXVGZTFxcEXd4BWvb5YMix3QDKhagnQk8-1uPC8wQ25u1-SxTX82lHN5yorC_Rj7xFZGjLCwRNKPoItAasH2R1w_Xo3TwlXXW4Kr8ObJyp04IrurTX1eoqi8NXX-CZc1NBAG8Lh_Pqz-aKySQX2ki6DkGct_tAHm9zvJiuyrHBRg8XtLw3EalRk4VXYjHppzTJNbbX2AcrKU-GN1YHczBCShBc62OekfE.Z1o394cxPyubm4IXBPivqw; KEYCLOAK_IDENTITY=eyJhbGciOiJIUzUxMiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJmMzllMGQ3MS1kOWIzLTRkZTYtYTM3MS04M2I0YzI1M2NhOWUifQ.eyJleHAiOjE3Njg5OTA4NzksImlhdCI6MTc2ODk1NDg3OSwianRpIjoiMDM1M2JkNzQtNmY0MC1hZWJhLTg4NGMtMmY0ZGQ4OThiNTQ2IiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9yZWFjdC1yZWFsbSIsInN1YiI6ImNiMmI4ZGNiLThhYjMtNDJlNi1hOTdkLWYyMTAwNmU1M2UwYSIsInR5cCI6IlNlcmlhbGl6ZWQtSUQiLCJzaWQiOiIzODkzODYxNS1hNjJlLTA4ZTctZTZjMC00MWJmMTYyNWRjZjIiLCJzdGF0ZV9jaGVja2VyIjoiUmFDTGxXakRvcWl4d3NQN1ZKYUluTFNReUFuY1dlenJPczd0ZUdlakszOCJ9.GWe62tsOvgAtjO4WrcmRzmjv0nu_XZtUyg0GIaBOfNHI4yuJDHLqKVWW0z15jYa0G99mJPyhIG4-0uvfjDvVfA
+
+### add a new belt
+POST http://localhost:5269/Belts
+Content-Type: application/json
+
+{
+  "name": "Belt E"
+}
+
+### get all Temperature
+GET http://localhost:5269/temp
+Accept: application/json
+
+### add a new belt temp
+POST http://localhost:5269/temp
+Content-Type: application/json
+
+{
+  "BeltId": 5,
+  "Value": 88
+}

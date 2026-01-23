@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import reactLogo from "../assets/react.svg";
 import React from "react";
 import axios from "axios";
 import keycloak from "../Keycloak";
@@ -144,7 +143,7 @@ function Home() {
   }, []);
 
   return (
-    <div className="App">
+    <div className="Home">
       <div>
         <a
           href="https://github.com/UofA-BAJA/2025-2026-firmware/tree/main"
@@ -152,11 +151,8 @@ function Home() {
         >
           <img src="/baja_logo.jpg" className="logo" alt="Baja logo" />
         </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
       </div>
-      <h1>Line Graph Test</h1>
+      <h1>SVG Line Graph Test</h1>
 
       <BarChart width={500} height={300} data={temps}>
         <CartesianGrid strokeDasharray="3 3" />
