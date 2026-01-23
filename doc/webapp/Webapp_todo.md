@@ -1,4 +1,4 @@
-John
+John .I
 
 * Research Keycloak w/ JWT
 * Frontend MVP (minimum viable product)
