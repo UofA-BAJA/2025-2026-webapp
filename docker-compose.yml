@@ -3,6 +3,17 @@ services:
     container_name: react-frontend
     build:
       context: ./frontend
+    develop:
+      # live reloading of container
+      watch:
+        - action: sync
+          path: ./backend
+          target: app/backend
+          ignore:
+            - node_modules/
+        # need to rebuild when we install new packages
+        - action: rebuild
+          path: package.json
     ports:
       - "5173:5173"
     depends_on:
@@ -34,32 +45,32 @@ services:
       - pgdata:/var/lib/postgresql/data
 
   keycloak:
-      image: quay.io/keycloak/keycloak:26.4.7
-      container_name: keycloak
-      environment:
-        # Database Config (Quarkus format)
-        KC_DB: postgres
-        KC_DB_URL: jdbc:postgresql://db:5432/mydatabase
-        KC_DB_USERNAME: myuser
-        KC_DB_PASSWORD: mysecretpassword
-        # Allows http://keycloak:8080 from other containers
-        KC_HOSTNAME_STRICT: "false"
-        # Disables strict HTTPS enforcement
-        KC_HOSTNAME_STRICT_HTTPS: "false" 
-        KC_HTTP_ENABLED: "true"
-        
-      # "start-dev" enables dev mode
-      # "--import-realm" tells Keycloak to look in /opt/keycloak/data/import
-      command: start-dev --import-realm
-      ports:
-        - "8080:8080"
-      depends_on:
-        - db
-      volumes:
-        - keycloak_data:/opt/keycloak/data
-        # Mount local json files to the container's import folder
-        - ./react-realm-realm.json:/opt/keycloak/data/import/react-realm-realm.json
-        - ./master-realm.json:/opt/keycloak/data/import/master-realm.json
+    image: quay.io/keycloak/keycloak:26.4.7
+    container_name: keycloak
+    environment:
+      # Database Config (Quarkus format)
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://db:5432/mydatabase
+      KC_DB_USERNAME: myuser
+      KC_DB_PASSWORD: mysecretpassword
+      # Allows http://keycloak:8080 from other containers
+      KC_HOSTNAME_STRICT: "false"
+      # Disables strict HTTPS enforcement
+      KC_HOSTNAME_STRICT_HTTPS: "false"
+      KC_HTTP_ENABLED: "true"
+
+    # "start-dev" enables dev mode
+    # "--import-realm" tells Keycloak to look in /opt/keycloak/data/import
+    command: start-dev --import-realm
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+      # Mount local json files to the container's import folder
+      - ./react-realm-realm.json:/opt/keycloak/data/import/react-realm-realm.json
+      - ./master-realm.json:/opt/keycloak/data/import/master-realm.json
 
 volumes:
   pgdata:
