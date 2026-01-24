@@ -7,8 +7,8 @@ services:
       # live reloading of container
       watch:
         - action: sync
-          path: ./backend
-          target: app/backend
+          path: ./frontend/src
+          target: /app/src
           ignore:
             - node_modules/
         # need to rebuild when we install new packages
@@ -23,6 +23,19 @@ services:
     container_name: dotnet-backend
     build:
       context: ./backend
+    develop:
+      # live reloading, dotnet does watching, see ./backend/Dockerfile line 17
+      watch:
+        - action: sync
+          path: ./backend
+          target: /app
+          ignore:
+            - node_modules/
+            - obj/
+            - bin/
+        # rebuild with new packages
+        - action: rebuild
+          path: package.json
     environment:
       ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=mydatabase;Username=myuser;Password=mysecretpassword
     depends_on:
