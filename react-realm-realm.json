@@ -22,7 +22,7 @@
   "users": [
     {
       "username": "user",
-      "email": "user@localhost",
+      "email": "${KC_USER_EMAIL}",
       "firstName": "firstNameUser",
       "lastName": "lastNameUser",
       "enabled": true,
@@ -30,7 +30,7 @@
       "credentials": [
         {
           "type": "password",
-          "value": "user"
+          "value": "${KC_USER_PW}"
         }
       ],
       "realmRoles": ["admin"]

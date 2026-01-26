@@ -4,8 +4,8 @@
   "sslRequired": "none",
   "users": [
     {
-      "username": "admin",
-      "email": "admin@localhost",
+      "username": "${KC_ADMIN}",
+      "email": "${KC_ADMIN_EMAIL}",
       "firstName": "Admin",
       "lastName": "User",
       "enabled": true,
@@ -13,7 +13,7 @@
       "credentials": [
         {
           "type": "password",
-          "value": "admin"
+          "value": "${KC_ADMIN_PW}"
         }
       ],
       "realmRoles": [
