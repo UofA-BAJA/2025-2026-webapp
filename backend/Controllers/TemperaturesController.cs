@@ -4,7 +4,7 @@ using WebApplication2.Data;
 using WebApplication2.Models;
 
 [ApiController]
-// hard code so we don't have to write full name
+// hard code (for now ) so we don't have to write full name
 [Route("temp")]
 public class TemperaturesController : ControllerBase
 {

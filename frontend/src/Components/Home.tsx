@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import React from "react";
 import axios from "axios";
 import keycloak from "../Keycloak";
+import ScatterPlot from "./ScatterPlot";
 const rootURL = "http://localhost:5269";
 
 import {
@@ -152,7 +153,11 @@ function Home() {
           <img src="/baja_logo.jpg" className="logo" alt="Baja logo" />
         </a>
       </div>
-      <h1> Temperature Data</h1>
+      {/* Echarts test */}
+      <div>
+        <ScatterPlot />
+      </div>
+      <h1>Temperature Data</h1>
 
       <BarChart width={500} height={300} data={temps}>
         <CartesianGrid strokeDasharray="3 3" />

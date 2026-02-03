@@ -7,7 +7,7 @@ down:
 	docker compose down
 
 up:
-	docker compose --env-file .env.dev up -d
+	docker compose --env-file .env up -d
 
 watch:
 	docker compose up --watch
