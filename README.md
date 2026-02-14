@@ -2,8 +2,9 @@
 Baja Wildcat Racing web app
 
 **Development Stack**
+Note: Make sure Docker is running
 
-Fontend: 
+Fontend: m
 * React
 * TypeScript & JavaScript
 * Node.js - The runtime environment used to build and serve the frontend assets
@@ -11,6 +12,7 @@ Fontend:
 Backend
 * .NET (C#) - Logic and API endpoints
 * Docker Image (.NET): Official .NET image
+* Run `dotnet add package DotNetEnv` in ./backend folder sicne it is needed for .env to read connection string
 
 Database:
 * PostgreSQL - The relational database for persistent data storage

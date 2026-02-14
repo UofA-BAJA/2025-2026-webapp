@@ -4,7 +4,7 @@
   "sslRequired": "none",
   "users": [
     {
-      "username": "${KC_ADMIN}",
+      "username": "admin",
       "email": "${KC_ADMIN_EMAIL}",
       "firstName": "Admin",
       "lastName": "User",

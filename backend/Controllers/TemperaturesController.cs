@@ -4,7 +4,7 @@ using WebApplication2.Data;
 using WebApplication2.Models;
 
 [ApiController]
-// hard code (for now ) so we don't have to write full name
+// hard code endpoint instead of model name (for now ) so we don't have to write full name
 [Route("temp")]
 public class TemperaturesController : ControllerBase
 {
@@ -20,6 +20,12 @@ public class TemperaturesController : ControllerBase
     {
         return await _context.Temperatures.ToListAsync();
     }
+
+    // [HttpGet]
+    // public async Task<Temperature> test()
+    // {
+    //     return new Temperature();
+    // }
 
     [HttpPost]
     public async Task<IActionResult> Create(Temperature temp)

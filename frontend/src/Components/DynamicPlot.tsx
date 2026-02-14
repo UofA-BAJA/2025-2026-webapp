@@ -1,5 +1,6 @@
 import ReactECharts from "echarts-for-react";
 import { useEffect, useRef } from "react";
+import keycloak from "../Keycloak";
 
 type Point = [number | string | Date, number];
 
@@ -26,7 +27,12 @@ export default function DynamicPlot() {
   const dataRef = useRef<Point[]>([]);
 
   const fetchData = async () => {
-    const res = await fetch("/api/metrics");
+    const res = await fetch("/api/test", {
+      headers: {
+        Authorization: `Bearer ${keycloak.token}`,
+        "Content-Type": "application/json",
+      },
+    });
     const json = await res.json();
 
     dataRef.current.push([json.timestamp, json.value]);
