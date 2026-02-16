@@ -22,17 +22,10 @@
   "users": [
     {
       "username": "user",
-      "email": "${KC_USER_EMAIL}",
       "firstName": "firstNameUser",
       "lastName": "lastNameUser",
       "enabled": true,
       "emailVerified": true,
-      "credentials": [
-        {
-          "type": "password",
-          "value": "${KC_USER_PW}"
-        }
-      ],
       "realmRoles": ["admin"]
     }
   ]

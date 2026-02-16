@@ -4,7 +4,7 @@ Baja Wildcat Racing web app
 **Development Stack**
 Note: Make sure Docker is running
 
-Fontend: m
+Fontend:
 * React
 * TypeScript & JavaScript
 * Node.js - The runtime environment used to build and serve the frontend assets

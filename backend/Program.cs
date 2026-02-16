@@ -8,8 +8,6 @@ DotNetEnv.Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
-// string myVariable = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
-
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 
