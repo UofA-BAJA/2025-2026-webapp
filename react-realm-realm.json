@@ -21,11 +21,19 @@
   ],
   "users": [
     {
-      "username": "user",
+      "username": "baja",
       "firstName": "firstNameUser",
       "lastName": "lastNameUser",
       "enabled": true,
       "emailVerified": true,
+      "credentials": [
+        {
+          "temporary": true,
+          "type": "password",
+          "value": "baja"
+        }
+
+      ],
       "realmRoles": ["admin"]
     }
   ]
