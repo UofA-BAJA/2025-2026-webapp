@@ -1,4 +1,4 @@
-FROM postgres:18
+FROM postgres:17
 
 # env vars
 ENV POSTGRES_USER=myuser
