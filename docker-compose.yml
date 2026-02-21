@@ -73,29 +73,7 @@ services:
       KC_HTTP_ENABLED: "true"
       KC_BOOTSTRAP_ADMIN_USERNAME: "${KC_BOOTSTRAP_ADMIN_USERNAME}"
       KC_BOOTSTRAP_ADMIN_PASSWORD: "${KC_BOOTSTRAP_ADMIN_PASSWORD}"
-
-    # "start-dev" enables dev mode
-    # "--import-realm" tells Keycloak to look in /opt/keycloak/data/import
-    # command: >
-    #   export STEP_ONE="step 1"
-    #   && start-dev --import-realm
-    #   && export STEP_TWO="step 2"
-    #   && opt/keycloak/bin/kcadm.sh config credentials --server http://localhost:8080 --realm master --user admin --password ${KC_BOOTSTRAP_ADMIN_PASSWORD}
-    #   && export STEP_THREE="step 3"
-    #   && opt/keycloak/bin/kcadm.sh create users -s username=baja -s email=baja@example.com -s enabled=true -s emailVerified=true -r react-realm
-    #   && export STEP_FOUR="step 4"
-    #   && opt/keycloak/bin/kcadm.sh set-password -r react-realm --username baja --new-password baja
-    #   && export STEP_FIVE="step 5"
-    command: /bin/sh -c "
-      export STEP_ONE='step 1' &&
-      start-dev --import-realm &&
-      export STEP_TWO='step 2' &&
-      opt/keycloak/bin/kcadm.sh config credentials --server http://localhost:8080 --realm master --user admin --password ${KC_BOOTSTRAP_ADMIN_PASSWORD} &&
-      export STEP_THREE='step 3' &&
-      opt/keycloak/bin/kcadm.sh create users -s username=baja -s email=baja@example.com -s enabled=true -s emailVerified=true -r react-realm &&
-      export STEP_FOUR='step 4' &&
-      opt/keycloak/bin/kcadm.sh set-password -r react-realm --username baja --new-password baja &&
-      export STEP_FIVE='step 5'"
+    command: start-dev --import-realm
     ports:
       - "8080:8080"
     depends_on:
