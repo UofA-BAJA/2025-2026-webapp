@@ -43,10 +43,11 @@ function Home() {
 
   // post request to add a new belt
   async function createBelt(e: React.FormEvent) {
+    console.log(`FRONTEND REST: CREATE belt ${beltName}`)
     await keycloak.updateToken(30);
-
     e.preventDefault();
     try {
+      console.log(`FRONTEND REST: CREATE belt ${beltName}`)
       const response = await axios.post(
         `${rootURL}/Belts`,
         {

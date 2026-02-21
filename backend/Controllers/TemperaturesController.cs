@@ -21,12 +21,6 @@ public class TemperaturesController : ControllerBase
         return await _context.Temperatures.ToListAsync();
     }
 
-    // [HttpGet]
-    // public async Task<Temperature> test()
-    // {
-    //     return new Temperature();
-    // }
-
     [HttpPost]
     public async Task<IActionResult> Create(Temperature temp)
     {

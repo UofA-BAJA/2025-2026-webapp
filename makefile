@@ -2,6 +2,8 @@
 
 clean:
 	docker container prune -f
+	docker compose down -v
+	docker system prune --volumes -f
 	docker system prune --volumes -f
 down: 
 	docker compose down

@@ -23,6 +23,7 @@ public class BeltsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(Belt belt)
     {
+         Console.WriteLine("CREATE METHOD");
         _context.Belts.Add(belt);
         await _context.SaveChangesAsync();
         // send back belt id
