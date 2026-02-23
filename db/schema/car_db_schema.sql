@@ -1,19 +1,21 @@
-CREATE TABLE vehicle (
+CREATE SCHEMA IF NOT EXISTS baja AUTHORIZATION myuser;
+
+CREATE TABLE IF NOT EXISTS baja.vehicle (
     name TEXT PRIMARY KEY,
     competition_year INTEGER NOT NULL
 );
 
-CREATE TABLE session (
+CREATE TABLE IF NOT EXISTS baja.session (
     id BIGSERIAL PRIMARY KEY,
-    vehicle TEXT NOT NULL REFERENCES vehicle(name) ON DELETE CASCADE,
+    vehicle TEXT NOT NULL REFERENCES baja.vehicle(name) ON DELETE CASCADE,
     started_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     source_file TEXT NOT NULL UNIQUE
 );
 
-CREATE INDEX session_vehicle_started_idx
-    ON session (vehicle, started_at);
+CREATE INDEX IF NOT EXISTS session_vehicle_started_idx
+    ON baja.session (vehicle, started_at);
 
-CREATE TABLE sensor (
+CREATE TABLE IF NOT EXISTS baja.sensor (
     name TEXT PRIMARY KEY,
     manufacturer TEXT NOT NULL,
     model TEXT NOT NULL,
@@ -21,126 +23,99 @@ CREATE TABLE sensor (
     description TEXT
 );
 
-CREATE TABLE log (
+CREATE TABLE IF NOT EXISTS baja.log (
     id BIGSERIAL PRIMARY KEY,
-    session_id BIGINT NOT NULL REFERENCES session(id) ON DELETE CASCADE,
+    session_id BIGINT NOT NULL REFERENCES baja.session(id) ON DELETE CASCADE,
     ts TIMESTAMPTZ NOT NULL DEFAULT now(),
-    vehicle TEXT NOT NULL REFERENCES vehicle(name) ON DELETE CASCADE,
     type TEXT NOT NULL,
     message TEXT
 );
 
-CREATE INDEX log_ts_vehicle_idx
-    ON log (ts, vehicle);
+CREATE INDEX IF NOT EXISTS log_ts_vehicle_idx
+    ON baja.log (ts, session_id);
 
-CREATE INDEX log_session_idx
-    ON log (session_id);
+CREATE INDEX IF NOT EXISTS log_session_idx
+    ON baja.log (session_id);
 
-CREATE TABLE imu (
-    session_id BIGINT NOT NULL REFERENCES session(id) ON DELETE CASCADE,
+CREATE TABLE IF NOT EXISTS baja.imu (
+    session_id BIGINT NOT NULL REFERENCES baja.session(id) ON DELETE CASCADE,
     ts TIMESTAMPTZ NOT NULL DEFAULT now(),
-    vehicle TEXT NOT NULL REFERENCES vehicle(name) ON DELETE CASCADE,
-    sensor TEXT NOT NULL REFERENCES sensor(name) ON DELETE CASCADE,
+    sensor TEXT NOT NULL REFERENCES baja.sensor(name) ON DELETE CASCADE,
     ax DOUBLE PRECISION,
     ay DOUBLE PRECISION,
     az DOUBLE PRECISION,
-    PRIMARY KEY (session_id, ts, vehicle, sensor)
+    PRIMARY KEY (session_id, ts, sensor)
 );
 
-CREATE INDEX imu_ts_vehicle_sensor_idx
-    ON imu (ts, vehicle, sensor);
 
-CREATE INDEX imu_session_idx
-    ON imu (session_id);
+CREATE INDEX IF NOT EXISTS imu_session_idx
+    ON baja.imu (session_id);
 
-CREATE TABLE gps (
-    session_id BIGINT NOT NULL REFERENCES session(id) ON DELETE CASCADE,
+CREATE TABLE IF NOT EXISTS baja.gps (
+    session_id BIGINT NOT NULL REFERENCES baja.session(id) ON DELETE CASCADE,
     ts TIMESTAMPTZ NOT NULL DEFAULT now(),
-    vehicle TEXT NOT NULL REFERENCES vehicle(name) ON DELETE CASCADE,
-    sensor TEXT NOT NULL REFERENCES sensor(name) ON DELETE CASCADE,
+    sensor TEXT NOT NULL REFERENCES baja.sensor(name) ON DELETE CASCADE,
     lat DOUBLE PRECISION,
     lon DOUBLE PRECISION,
     alt DOUBLE PRECISION,
-    PRIMARY KEY (session_id, ts, vehicle, sensor)
+    PRIMARY KEY (session_id, ts, sensor)
 );
 
-CREATE INDEX gps_ts_vehicle_sensor_idx
-    ON gps (ts, vehicle, sensor);
+CREATE INDEX IF NOT EXISTS gps_session_idx
+    ON baja.gps (session_id);
 
-CREATE INDEX gps_session_idx
-    ON gps (session_id);
-
-CREATE TABLE pressure (
-    session_id BIGINT NOT NULL REFERENCES session(id) ON DELETE CASCADE,
+CREATE TABLE IF NOT EXISTS baja.pressure (
+    session_id BIGINT NOT NULL REFERENCES baja.session(id) ON DELETE CASCADE,
     ts TIMESTAMPTZ NOT NULL DEFAULT now(),
-    vehicle TEXT NOT NULL REFERENCES vehicle(name) ON DELETE CASCADE,
-    sensor TEXT NOT NULL REFERENCES sensor(name) ON DELETE CASCADE,
+    sensor TEXT NOT NULL REFERENCES baja.sensor(name) ON DELETE CASCADE,
     psi DOUBLE PRECISION,
-    PRIMARY KEY (session_id, ts, vehicle, sensor)
+    PRIMARY KEY (session_id, ts, sensor)
 );
 
-CREATE INDEX pressure_ts_vehicle_sensor_idx
-    ON pressure (ts, vehicle, sensor);
+CREATE INDEX IF NOT EXISTS pressure_session_idx
+    ON baja.pressure (session_id);
 
-CREATE INDEX pressure_session_idx
-    ON pressure (session_id);
-
-CREATE TABLE linear_actuator (
-    session_id BIGINT NOT NULL REFERENCES session(id) ON DELETE CASCADE,
+CREATE TABLE IF NOT EXISTS baja.linear_actuator (
+    session_id BIGINT NOT NULL REFERENCES baja.session(id) ON DELETE CASCADE,
     ts TIMESTAMPTZ NOT NULL DEFAULT now(),
-    vehicle TEXT NOT NULL REFERENCES vehicle(name) ON DELETE CASCADE,
-    sensor TEXT NOT NULL REFERENCES sensor(name) ON DELETE CASCADE,
+    sensor TEXT NOT NULL REFERENCES baja.sensor(name) ON DELETE CASCADE,
     displacement DOUBLE PRECISION,
-    PRIMARY KEY (session_id, ts, vehicle, sensor)
+    PRIMARY KEY (session_id, ts, sensor)
 );
 
-CREATE INDEX linear_actuator_ts_vehicle_sensor_idx
-    ON linear_actuator (ts, vehicle, sensor);
 
-CREATE INDEX linear_actuator_session_idx
-    ON linear_actuator (session_id);
+CREATE INDEX IF NOT EXISTS linear_actuator_session_idx
+    ON baja.linear_actuator (session_id);
 
-CREATE TABLE temperature (
-    session_id BIGINT NOT NULL REFERENCES session(id) ON DELETE CASCADE,
+CREATE TABLE IF NOT EXISTS baja.temperature (
+    session_id BIGINT NOT NULL REFERENCES baja.session(id) ON DELETE CASCADE,
     ts TIMESTAMPTZ NOT NULL DEFAULT now(),
-    vehicle TEXT NOT NULL REFERENCES vehicle(name) ON DELETE CASCADE,
-    sensor TEXT NOT NULL REFERENCES sensor(name) ON DELETE CASCADE,
+    sensor TEXT NOT NULL REFERENCES baja.sensor(name) ON DELETE CASCADE,
     temp DOUBLE PRECISION,
-    PRIMARY KEY (session_id, ts, vehicle, sensor)
+    PRIMARY KEY (session_id, ts, sensor)
 );
 
-CREATE INDEX temperature_ts_vehicle_sensor_idx
-    ON temperature (ts, vehicle, sensor);
+CREATE INDEX IF NOT EXISTS temperature_session_idx
+    ON baja.temperature (session_id);
 
-CREATE INDEX temperature_session_idx
-    ON temperature (session_id);
-
-CREATE TABLE tachometer (
-    session_id BIGINT NOT NULL REFERENCES session(id) ON DELETE CASCADE,
+CREATE TABLE IF NOT EXISTS baja.tachometer (
+    session_id BIGINT NOT NULL REFERENCES baja.session(id) ON DELETE CASCADE,
     ts TIMESTAMPTZ NOT NULL DEFAULT now(),
-    vehicle TEXT NOT NULL REFERENCES vehicle(name) ON DELETE CASCADE,
-    sensor TEXT NOT NULL REFERENCES sensor(name) ON DELETE CASCADE,
+    sensor TEXT NOT NULL REFERENCES baja.sensor(name) ON DELETE CASCADE,
     rpm DOUBLE PRECISION,
-    PRIMARY KEY (session_id, ts, vehicle, sensor)
+    PRIMARY KEY (session_id, ts, sensor)
 );
 
-CREATE INDEX tachometer_ts_vehicle_sensor_idx
-    ON tachometer (ts, vehicle, sensor);
+CREATE INDEX IF NOT EXISTS tachometer_session_idx
+    ON baja.tachometer (session_id);
 
-CREATE INDEX tachometer_session_idx
-    ON tachometer (session_id);
-
-CREATE TABLE vehicle_state (
-    session_id BIGINT NOT NULL REFERENCES session(id) ON DELETE CASCADE,
+CREATE TABLE IF NOT EXISTS baja.vehicle_state (
+    session_id BIGINT NOT NULL REFERENCES baja.session(id) ON DELETE CASCADE,
     ts TIMESTAMPTZ NOT NULL DEFAULT now(),
-    vehicle TEXT NOT NULL REFERENCES vehicle(name) ON DELETE CASCADE,
     speed DOUBLE PRECISION,
     dist DOUBLE PRECISION,
-    PRIMARY KEY (session_id, ts, vehicle)
+    PRIMARY KEY (session_id, ts)
 );
 
-CREATE INDEX vehicle_state_ts_vehicle_idx
-    ON vehicle_state (ts, vehicle);
-
-CREATE INDEX vehicle_state_session_idx
-    ON vehicle_state (session_id);
+CREATE INDEX IF NOT EXISTS vehicle_state_session_idx
+    ON baja.vehicle_state (session_id);
