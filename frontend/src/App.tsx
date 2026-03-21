@@ -5,6 +5,7 @@ import Contact from "./Components/Contact";
 import Nave from "./Components/Nave";
 import About from "./Components/About";
 import TestSecure from "./Components/TestSecure";
+import Convert from "./Components/Convert";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/convert" element={<Convert />} />
       </Routes>
     </div>
   );
