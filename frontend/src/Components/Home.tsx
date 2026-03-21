@@ -26,10 +26,11 @@ function Home() {
   };
 
   type Temp = {
-    id: number;
-    epoch: number;
-    value: number;
-    beltId: number;
+    temperature_pkey: number;
+    temperature_sensor_fkey: number;
+    temperature_session_id_fkey: number;
+    temp: number;
+    sensor: string;
   };
 
   type Belt = {
