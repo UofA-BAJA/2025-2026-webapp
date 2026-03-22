@@ -2,14 +2,13 @@ using WebApplication2.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Scalar.AspNetCore;
 
 // load .env varibles before building the app
 DotNetEnv.Env.Load();
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
-builder.Services.AddControllers();
 
 // ----- Keycloak JWT Authentication ----- //
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -22,7 +21,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
-            ValidIssuer = "http://localhost:8080/realms/react-realm",
+            ValidIssuers = new []
+            {"http://keycloak:8080/realms/react-realm", 
+            "http://localhost:8080/realms/react-realm"},
             // for simplicity
             ValidateAudience = false
         };
@@ -62,7 +63,7 @@ builder.Services.AddControllers(options =>
 builder.Services.AddDbContext<MyDbContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    options.UseNpgsql(connectionString);
+    options.UseNpgsql(connectionString).LogTo(Console.WriteLine, LogLevel.Information);
 });
 
 // set up connections from react
@@ -84,8 +85,11 @@ app.UseCors("AllowReactDev");
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
 }
 
+
+// Should be added back in for prod
 // app.UseHttpsRedirection();
 
 // ----- Add Authentication and Authorization Middleware -----//

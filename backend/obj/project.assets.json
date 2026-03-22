@@ -1117,6 +1117,22 @@
           }
         }
       },
+      "Scalar.AspNetCore/2.13.3": {
+        "type": "package",
+        "compile": {
+          "lib/net9.0/Scalar.AspNetCore.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net9.0/Scalar.AspNetCore.dll": {
+            "related": ".xml"
+          }
+        },
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ]
+      },
       "Sprache/2.3.1": {
         "type": "package",
         "dependencies": {
@@ -4407,6 +4423,25 @@
         "runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl.4.3.2.nupkg.sha512",
         "runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl.nuspec",
         "runtimes/ubuntu.16.10-x64/native/System.Security.Cryptography.Native.OpenSsl.so"
+      ]
+    },
+    "Scalar.AspNetCore/2.13.3": {
+      "sha512": "py+bnF628jLbm63Q8VabQyzNNP0/jMJAVLrUaxhLMvU75GZVcN9LgdXRLk42Grpcih3rqZcRY+eSSkYO3+3QTQ==",
+      "type": "package",
+      "path": "scalar.aspnetcore/2.13.3",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "icon.png",
+        "lib/net10.0/Scalar.AspNetCore.dll",
+        "lib/net10.0/Scalar.AspNetCore.xml",
+        "lib/net8.0/Scalar.AspNetCore.dll",
+        "lib/net8.0/Scalar.AspNetCore.xml",
+        "lib/net9.0/Scalar.AspNetCore.dll",
+        "lib/net9.0/Scalar.AspNetCore.xml",
+        "scalar.aspnetcore.2.13.3.nupkg.sha512",
+        "scalar.aspnetcore.nuspec"
       ]
     },
     "Sprache/2.3.1": {
@@ -7791,28 +7826,30 @@
       "Microsoft.AspNetCore.OpenApi >= 9.0.9",
       "Microsoft.EntityFrameworkCore >= 9.0.10",
       "Microsoft.EntityFrameworkCore.Design >= 9.0.10",
-      "Npgsql.EntityFrameworkCore.PostgreSQL >= 9.0.4"
+      "Npgsql.EntityFrameworkCore.PostgreSQL >= 9.0.4",
+      "Scalar.AspNetCore >= 2.13.3"
     ]
   },
   "packageFolders": {
-    "/Users/johnimanishimwe/.nuget/packages/": {}
+    "/home/matthew-ua/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/johnimanishimwe/projects/baja/2025-2026-webapp/backend/backend.csproj",
+      "projectUniqueName": "/home/matthew-ua/Baja/2025-2026-webapp/backend/backend.csproj",
       "projectName": "backend",
-      "projectPath": "/Users/johnimanishimwe/projects/baja/2025-2026-webapp/backend/backend.csproj",
-      "packagesPath": "/Users/johnimanishimwe/.nuget/packages/",
-      "outputPath": "/Users/johnimanishimwe/projects/baja/2025-2026-webapp/backend/obj/",
+      "projectPath": "/home/matthew-ua/Baja/2025-2026-webapp/backend/backend.csproj",
+      "packagesPath": "/home/matthew-ua/.nuget/packages/",
+      "outputPath": "/home/matthew-ua/Baja/2025-2026-webapp/backend/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/Users/johnimanishimwe/.nuget/NuGet/NuGet.Config"
+        "/home/matthew-ua/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
       ],
       "sources": {
+        "/usr/lib64/dotnet/library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -7831,7 +7868,7 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "9.0.300"
+      "SdkAnalysisLevel": "9.0.100"
     },
     "frameworks": {
       "net9.0": {
@@ -7862,6 +7899,10 @@
           "Npgsql.EntityFrameworkCore.PostgreSQL": {
             "target": "Package",
             "version": "[9.0.4, )"
+          },
+          "Scalar.AspNetCore": {
+            "target": "Package",
+            "version": "[2.13.3, )"
           }
         },
         "imports": [
@@ -7883,7 +7924,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.305/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/lib64/dotnet/sdk/9.0.114/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

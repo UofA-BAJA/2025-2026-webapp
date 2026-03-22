@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS baja.log (
     message TEXT
 );
 
-CREATE INDEX IF NOT EXISTS log_ts_vehicle_idx
+CREATE INDEX IF NOT EXISTS lg_ts_vehicle_idx
     ON baja.log (ts, session_id);
 
 CREATE INDEX IF NOT EXISTS log_session_idx

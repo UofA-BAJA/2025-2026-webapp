@@ -1,0 +1,11 @@
+name: Regular User
+values:
+  - key: Baja Username
+    value: ''
+    enabled: true
+  - key: Baja Password
+    value: ''
+    enabled: true
+  - key: Client id
+    value: ''
+    enabled: true

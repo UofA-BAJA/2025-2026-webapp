@@ -1,0 +1,17 @@
+$kind: http-request
+name: Vehicle Get
+url: http://localhost:5269/vehicle
+method: GET
+auth:
+  type: oauth2
+  credentials:
+    authUrl: http://localhost:8080/realms/react-realm/
+    accessTokenUrl: http://localhost:8080/realms/react-realm/protocol/openid-connect/auth
+    clientId: react-app
+    clientSecret: ""
+    scope: openid
+    grant_type: password_credentials
+    username: "{{Baja Username}}"
+    password: "{{Baja Password}}"
+    tokenName: ""
+order: 1773116669517
