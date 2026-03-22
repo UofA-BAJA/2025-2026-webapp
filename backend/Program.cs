@@ -3,12 +3,27 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
 
 // load .env varibles before building the app
 DotNetEnv.Env.Load();
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
+
+// ----- Rate Limites ----- //
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddFixedWindowLimiter("RateLimiter", opt =>
+    {
+        opt.PermitLimit = 30;
+        opt.Window = TimeSpan.FromMinutes(1);
+        opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        opt.QueueLimit = 2;
+    });
+});
+// ----- Rate Limites ----- //
 
 // ----- Keycloak JWT Authentication ----- //
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -98,7 +113,7 @@ app.UseAuthorization();
 // ----- End Authentication and Authorization Middleware -----//
 
 app.MapControllers();
-
+// Enable Rate Limites
+app.UseRateLimiter();
 app.MapGet("/secure", () => "You are authorized!").RequireAuthorization();
-
 app.Run();
