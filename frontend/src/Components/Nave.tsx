@@ -25,6 +25,9 @@ function Nave() {
       <Link to="/contact" style={{ paddingRight: "5px" }}>
         Contact
       </Link>
+      <Link to="/convert" style={{ paddingRight: "5px" }}>
+        CSVConvert
+      </Link>
     </nav>
   );
 }

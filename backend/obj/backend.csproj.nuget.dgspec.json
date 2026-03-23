@@ -1,26 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "/home/matthew-ua/Baja/2025-2026-webapp/backend/backend.csproj": {}
+    "/Users/johnimanishimwe/projects/baja/2025-2026-webapp/backend/backend.csproj": {}
   },
   "projects": {
-    "/home/matthew-ua/Baja/2025-2026-webapp/backend/backend.csproj": {
+    "/Users/johnimanishimwe/projects/baja/2025-2026-webapp/backend/backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/matthew-ua/Baja/2025-2026-webapp/backend/backend.csproj",
+        "projectUniqueName": "/Users/johnimanishimwe/projects/baja/2025-2026-webapp/backend/backend.csproj",
         "projectName": "backend",
-        "projectPath": "/home/matthew-ua/Baja/2025-2026-webapp/backend/backend.csproj",
-        "packagesPath": "/home/matthew-ua/.nuget/packages/",
-        "outputPath": "/home/matthew-ua/Baja/2025-2026-webapp/backend/obj/",
+        "projectPath": "/Users/johnimanishimwe/projects/baja/2025-2026-webapp/backend/backend.csproj",
+        "packagesPath": "/Users/johnimanishimwe/.nuget/packages/",
+        "outputPath": "/Users/johnimanishimwe/projects/baja/2025-2026-webapp/backend/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/matthew-ua/.nuget/NuGet/NuGet.Config"
+          "/Users/johnimanishimwe/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
         ],
         "sources": {
-          "/usr/lib64/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -39,7 +38,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.100"
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
         "net9.0": {
@@ -95,7 +94,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/lib64/dotnet/sdk/9.0.114/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.305/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
