@@ -28,7 +28,7 @@
       "emailVerified": true,
       "credentials": [
         {
-          "temporary": true,
+          "temporary": false,
           "type": "password",
           "value": "baja"
         }

@@ -43,7 +43,7 @@ function Convert() {
   return (
     <>
       <h1>Convert Data</h1>
-      <div>
+      <div style={{ paddingLeft: "10px" }}>
         <CSVLinkAny data={carData} headers={headers} filename={"data.csv"}>
           Download me
         </CSVLinkAny>
