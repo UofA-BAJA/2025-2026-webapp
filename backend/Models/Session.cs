@@ -22,4 +22,7 @@ public class Session
     [Required]
     [Column("source_file")]
     public string SourceFile { get; set; } = null!;
+
+    [ForeignKey(nameof(Vehicle))]
+    public Sensor VehicleNav { get; set; } = null!;
 }

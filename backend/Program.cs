@@ -26,52 +26,52 @@ builder.Services.AddRateLimiter(options =>
 // ----- Rate Limites ----- //
 
 // ----- Keycloak JWT Authentication ----- //
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        // Keycloak realm URL from docker service
-        options.Authority = "http://keycloak:8080/realms/react-realm";
-        // local development only
-        options.RequireHttpsMetadata = false;
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidIssuers = new []
-            {"http://keycloak:8080/realms/react-realm", 
-            "http://localhost:8080/realms/react-realm"},
-            // for simplicity
-            ValidateAudience = false
-        };
+// builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+//     .AddJwtBearer(options =>
+//     {
+//         // Keycloak realm URL from docker service
+//         options.Authority = "http://keycloak:8080/realms/react-realm";
+//         // local development only
+//         options.RequireHttpsMetadata = false;
+//         options.TokenValidationParameters = new TokenValidationParameters
+//         {
+//             ValidateIssuer = true,
+//             ValidIssuers = new []
+//             {"http://keycloak:8080/realms/react-realm", 
+//             "http://localhost:8080/realms/react-realm"},
+//             // for simplicity
+//             ValidateAudience = false
+//         };
 
-        // Debug logging
-        options.Events = new JwtBearerEvents
-        {
-            OnAuthenticationFailed = context =>
-            {
-                Console.WriteLine("AUTH FAILED:");
-                Console.WriteLine(context.Exception.ToString());
-                return Task.CompletedTask;
-            },
-            OnTokenValidated = context =>
-            {
-                Console.WriteLine("TOKEN VALIDATED SUCCESSFULLY");
-                return Task.CompletedTask;
-            },
-            OnChallenge = context =>
-            {
-                Console.WriteLine("AUTH CHALLENGE TRIGGERED");
-                Console.WriteLine(context.ErrorDescription);
-                return Task.CompletedTask;
-            }
-        };
-    });
-builder.Services.AddAuthorization();
+//         // Debug logging
+//         options.Events = new JwtBearerEvents
+//         {
+//             OnAuthenticationFailed = context =>
+//             {
+//                 Console.WriteLine("AUTH FAILED:");
+//                 Console.WriteLine(context.Exception.ToString());
+//                 return Task.CompletedTask;
+//             },
+//             OnTokenValidated = context =>
+//             {
+//                 Console.WriteLine("TOKEN VALIDATED SUCCESSFULLY");
+//                 return Task.CompletedTask;
+//             },
+//             OnChallenge = context =>
+//             {
+//                 Console.WriteLine("AUTH CHALLENGE TRIGGERED");
+//                 Console.WriteLine(context.ErrorDescription);
+//                 return Task.CompletedTask;
+//             }
+//         };
+//     });
+// builder.Services.AddAuthorization();
 
 // each controllers  use Authorization
-builder.Services.AddControllers(options =>
-{
-    options.Filters.Add(new Microsoft.AspNetCore.Mvc.Authorization.AuthorizeFilter());
-});
+builder.Services.AddControllers(
+
+    // options.Filters.Add(new Microsoft.AspNetCore.Mvc.Authorization.AuthorizeFilter());
+);
 // ----- End Keycloak JWT Authentication -----//
 
 // set up DB contect for postgresql
@@ -108,12 +108,12 @@ if (app.Environment.IsDevelopment())
 // app.UseHttpsRedirection();
 
 // ----- Add Authentication and Authorization Middleware -----//
-app.UseAuthentication();
-app.UseAuthorization();
+// app.UseAuthentication();
+// app.UseAuthorization();
 // ----- End Authentication and Authorization Middleware -----//
 
 app.MapControllers();
 // Enable Rate Limites
 app.UseRateLimiter();
-app.MapGet("/secure", () => "You are authorized!").RequireAuthorization();
+// app.MapGet("/secure", () => "You are authorized!").RequireAuthorization();
 app.Run();
