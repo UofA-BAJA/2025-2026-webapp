@@ -25,23 +25,30 @@ const baseOption = {
 export default function DynamicPlot() {
   const chartRef = useRef<ReactECharts | null>(null);
   const dataRef = useRef<Point[]>([]);
+  const sse = new EventSource("http://localhost:8000/stream");
 
-  const fetchData = async () => {
-    const res = await fetch("/api/test", {
-      headers: {
-        Authorization: `Bearer ${keycloak.token}`,
-        "Content-Type": "application/json",
-      },
-    });
-    const json = await res.json();
+  // SSE event action
+  sse.onmessage = (e) => {
+    const data = JSON.parse(e.data);
+    graphData(data);
+  };
 
-    dataRef.current.push([json.timestamp, json.value]);
-
+  // Graph the Data from the SSE
+  const graphData = (data: {
+    timestamp: string | number | Date;
+    value: number;
+  }) => {
+    dataRef.current.push([data.timestamp, data.value]);
     if (dataRef.current.length > 50) {
       dataRef.current.shift();
     }
-
     updateChart();
+  };
+
+  // Error Handling
+  sse.onerror = () => {
+    // error log here
+    sse.close();
   };
 
   const updateChart = () => {
@@ -54,7 +61,7 @@ export default function DynamicPlot() {
   };
 
   useEffect(() => {
-    const id = setInterval(fetchData, 2000);
+    const id = setInterval(updateChart, 2000);
     return () => clearInterval(id);
   }, []);
 
