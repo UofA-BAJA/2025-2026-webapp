@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS baja.log (
     message TEXT
 );
 
-CREATE INDEX IF NOT EXISTS log_ts_vehicle_idx
+CREATE INDEX IF NOT EXISTS lg_ts_vehicle_idx
     ON baja.log (ts, session_id);
 
 CREATE INDEX IF NOT EXISTS log_session_idx
@@ -41,6 +41,9 @@ CREATE TABLE IF NOT EXISTS baja.imu (
     session_id BIGINT NOT NULL REFERENCES baja.session(id) ON DELETE CASCADE,
     ts TIMESTAMPTZ NOT NULL DEFAULT now(),
     sensor TEXT NOT NULL REFERENCES baja.sensor(name) ON DELETE CASCADE,
+    rx DOUBLE PRECISION,
+    ry DOUBLE PRECISION,
+    rz DOUBLE PRECISION,
     ax DOUBLE PRECISION,
     ay DOUBLE PRECISION,
     az DOUBLE PRECISION,

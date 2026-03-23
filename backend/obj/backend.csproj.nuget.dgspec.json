@@ -69,6 +69,10 @@
             "Npgsql.EntityFrameworkCore.PostgreSQL": {
               "target": "Package",
               "version": "[9.0.4, )"
+            },
+            "Scalar.AspNetCore": {
+              "target": "Package",
+              "version": "[2.13.3, )"
             }
           },
           "imports": [

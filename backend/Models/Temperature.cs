@@ -1,15 +1,28 @@
-namespace WebApplication2.Models;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-[Table("temperature")]
+namespace WebApplication2.Models;
+
+[Table("temperature", Schema = "baja")]
 public class Temperature
 {
-    [Column("id")]
-    public int Id { get; set; }
-    [Column("epoch")]
-    public int Epoch { get; set; }
-    [Column("value")]
-    public int Value { get; set; }
-    [Column("belt_id")]
-    public int BeltId { get; set; }
+    [Column("session_id")]
+    public long SessionId { get; set; }
+
+    [Column("ts")]
+    public DateTime Ts { get; set; }
+
+    [Column("sensor")]
+    public string Sensor { get; set; } = null!;
+
+    [Column("temp")]
+    public double? Temp { get; set; }
+    
+
+    // Foreign Keys
+    [ForeignKey(nameof(SessionId))]
+    public Session Session { get; set; } = null!;
+
+    [ForeignKey(nameof(Sensor))]
+    public Sensor SensorNav { get; set; } = null!;
 }
