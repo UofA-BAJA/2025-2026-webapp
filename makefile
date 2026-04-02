@@ -7,8 +7,11 @@ clean:
 	docker system prune --volumes -f
 down: 
 	docker compose down
+	kill $$(cat server.pid) && rm server.pid
 
 up:
+	@# run python script in background
+	python3 ./tools/timeseries_stream.py --serve & echo $$! > python_stream.pid
 	docker compose --env-file .env up -d
 
 watch:
@@ -19,7 +22,6 @@ build:
 
 reset:
 	docker compose down
-# 	rm new postgres data
 	docker compose down -v
 	docker container prune -f
 	docker system prune --volumes -f

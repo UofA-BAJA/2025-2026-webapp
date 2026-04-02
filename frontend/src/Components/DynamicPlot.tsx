@@ -33,7 +33,7 @@ export default function DynamicPlot() {
     graphData(data);
   };
 
-  // Graph the Data from the SSE
+  // graph the data from the SSE
   const graphData = (data: {
     timestamp: string | number | Date;
     value: number;
@@ -45,7 +45,7 @@ export default function DynamicPlot() {
     updateChart();
   };
 
-  // Error Handling
+  // SSE error occured
   sse.onerror = () => {
     // error log here
     sse.close();

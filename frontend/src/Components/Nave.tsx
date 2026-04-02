@@ -28,6 +28,9 @@ function Nave() {
       <Link to="/convert" style={{ paddingRight: "5px" }}>
         CSVConvert
       </Link>
+      <Link to="/dynamic" style={{ paddingRight: "5px" }}>
+        Dynamic Plot
+      </Link>
     </nav>
   );
 }
