@@ -7,10 +7,11 @@ clean:
 	docker system prune --volumes -f
 down: 
 	docker compose down
-	kill $$(cat server.pid) && rm server.pid
+	@# run python script in background
+	kill $$(cat python_stream.pid) && rm server.pid
 
 up:
-	@# run python script in background
+	@# run python script in background and save process ID to a file
 	python3 ./tools/timeseries_stream.py --serve & echo $$! > python_stream.pid
 	docker compose --env-file .env up -d
 
@@ -19,6 +20,8 @@ watch:
 	
 build:
 	docker compose up --build -d
+	@# run python script in background and save process ID to a file
+	python3 ./tools/timeseries_stream.py --serve & echo $$! > python_stream.pid
 
 reset:
 	docker compose down
