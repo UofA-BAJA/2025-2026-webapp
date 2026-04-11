@@ -7,6 +7,7 @@ import About from "./Components/About";
 import TestSecure from "./Components/TestSecure";
 import Convert from "./Components/Convert";
 import DynamicPlot from "./Components/DynamicPlot";
+import Telematry from "./Components/Telematry";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/convert" element={<Convert />} />
         <Route path="/dynamic" element={<DynamicPlot />} />
+        <Route path="/telematry" element={<Telematry />} />
       </Routes>
     </div>
   );

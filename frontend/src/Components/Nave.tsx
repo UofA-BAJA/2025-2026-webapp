@@ -31,6 +31,9 @@ function Nave() {
       <Link to="/dynamic" style={{ paddingRight: "5px" }}>
         Dynamic Plot
       </Link>
+      <Link to="/telematry" style={{ paddingRight: "5px" }}>
+        Telematry
+      </Link>
     </nav>
   );
 }

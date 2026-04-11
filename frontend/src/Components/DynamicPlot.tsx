@@ -1,71 +1,46 @@
 import ReactECharts from "echarts-for-react";
 import { useEffect, useRef } from "react";
-import keycloak from "../Keycloak";
 
 type Point = [number | string | Date, number];
+// single point SSE Client
+const sse = new EventSource("http://localhost:8000/stream");
 
 const baseOption = {
-  animation: true,
-  xAxis: {
-    type: "time",
-  },
-  yAxis: {
-    type: "value",
-    scale: true,
-  },
-  series: [
-    {
-      type: "line",
-      showSymbol: false,
-      data: [],
-    },
-  ],
+  animation: false,
+  xAxis: { type: "time" },
+  yAxis: { type: "value", scale: true, interval: 1, min: 0 },
+  series: [{ type: "line", showSymbol: false, data: [] }],
 };
 
 export default function DynamicPlot() {
   const chartRef = useRef<ReactECharts | null>(null);
   const dataRef = useRef<Point[]>([]);
-  const sse = new EventSource("http://localhost:8000/stream");
-
-  // SSE event action
-  sse.onmessage = (e) => {
-    const data = JSON.parse(e.data);
-    graphData(data);
-  };
-
-  // graph the data from the SSE
-  const graphData = (data: {
-    timestamp: string | number | Date;
-    value: number;
-  }) => {
-    dataRef.current.push([data.timestamp, data.value]);
-    if (dataRef.current.length > 50) {
-      dataRef.current.shift();
-    }
-    updateChart();
-  };
-
-  // SSE error occured
-  sse.onerror = () => {
-    // error log here
-    sse.close();
-  };
-
-  const updateChart = () => {
-    const chart = chartRef.current?.getEchartsInstance();
-    if (!chart) return;
-
-    chart.setOption({
-      series: [{ data: dataRef.current }],
-    });
-  };
 
   useEffect(() => {
-    const id = setInterval(updateChart, 2000);
-    return () => clearInterval(id);
+    const handler = (e: MessageEvent) => {
+      // read the data
+      const data = JSON.parse(e.data);
+      // push the data to our current chart
+      dataRef.current.push([data.timestamp, data.value]);
+      // shift to only show 50 points at a time
+      if (dataRef.current.length > 50) {
+        dataRef.current.shift();
+      }
+      // update the full chart
+      chartRef.current?.getEchartsInstance()?.setOption({
+        series: [{ data: dataRef.current }],
+      });
+    };
+    // each new instance does the action above on ever message
+    sse.addEventListener("message", handler);
+    return () => sse.removeEventListener("message", handler);
   }, []);
 
   return (
-    <ReactECharts ref={chartRef} option={baseOption} style={{ height: 400 }} />
+    <ReactECharts
+      ref={chartRef}
+      option={baseOption}
+      style={{ height: "100%" }}
+    />
   );
 }

@@ -8,7 +8,7 @@ clean:
 down: 
 	docker compose down
 	@# run python script in background
-	kill $$(cat python_stream.pid) && rm server.pid
+	kill $$(cat python_stream.pid) && rm python_stream.pid
 
 up:
 	@# run python script in background and save process ID to a file

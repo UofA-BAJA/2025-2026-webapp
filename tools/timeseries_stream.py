@@ -20,6 +20,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 # Data generation
 # ---------------------------------------------------------------------------
 
+
 def generate_datapoint(t: float, noise: float = 0.5) -> dict:
     """Generate a single time series data point."""
     timestamp = datetime.fromtimestamp(t, tz=timezone.utc).isoformat()
@@ -27,18 +28,20 @@ def generate_datapoint(t: float, noise: float = 0.5) -> dict:
         10.0
         + 5.0 * math.sin(2 * math.pi * t / 60)  # 60-second sine wave
         + 2.0 * math.cos(2 * math.pi * t / 15)  # 15-second cosine wave
-        + random.gauss(0, noise)                  # Gaussian noise
+        + random.gauss(0, noise)  # Gaussian noise
     )
     return {
         "timestamp": timestamp,
         "value": round(value, 4),
         "epoch": round(t, 3),
+        "data_origin": random.randint(1, 10),
     }
 
 
 # ---------------------------------------------------------------------------
 # Stdout streaming (original behaviour)
 # ---------------------------------------------------------------------------
+
 
 def stream_historical_stdout(start: float, end: float, interval: float):
     t = start
@@ -59,6 +62,7 @@ def stream_live_stdout(interval: float, duration: float | None):
 # ---------------------------------------------------------------------------
 # SSE server
 # ---------------------------------------------------------------------------
+
 
 def make_handler(args):
     """Return an HTTP request handler class closed over CLI args."""
@@ -112,7 +116,10 @@ def make_handler(args):
                     stream_start = time.time()
                     while True:
                         emit(generate_datapoint(time.time()))
-                        if args.duration and (time.time() - stream_start) >= args.duration:
+                        if (
+                            args.duration
+                            and (time.time() - stream_start) >= args.duration
+                        ):
                             break
                         time.sleep(args.interval)
             except (BrokenPipeError, ConnectionResetError):
@@ -138,6 +145,7 @@ def run_server(args):
 # CLI
 # ---------------------------------------------------------------------------
 
+
 def main():
     parser = argparse.ArgumentParser(
         description="Stream time series data as NDJSON (stdout) or SSE (HTTP server)."
@@ -162,7 +170,7 @@ def main():
     parser.add_argument(
         "--interval",
         type=float,
-        default=1.0,
+        default=(1 / 30),
         help="Seconds between data points (default: 1.0)",
     )
     parser.add_argument(
