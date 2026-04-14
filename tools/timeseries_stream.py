@@ -30,11 +30,12 @@ def generate_datapoint(t: float, noise: float = 0.5) -> dict:
         + 2.0 * math.cos(2 * math.pi * t / 15)  # 15-second cosine wave
         + random.gauss(0, noise)  # Gaussian noise
     )
+    dataT = random.randint(1, 2)
     return {
         "timestamp": timestamp,
-        "value": round(value, 4),
+        "value": round(value, 4) if dataT == 1 else round(value, 4) + 10,
         "epoch": round(t, 3),
-        "data_origin": random.randint(1, 10),
+        "dataType": dataT,
     }
 
 

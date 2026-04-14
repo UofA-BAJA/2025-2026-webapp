@@ -18,13 +18,6 @@ import {
 } from "recharts";
 
 function Home() {
-  type Book = {
-    id: number;
-    title: string;
-    author: string;
-    yearPublished: number;
-  };
-
   type Temp = {
     temperature_pkey: number;
     temperature_sensor_fkey: number;

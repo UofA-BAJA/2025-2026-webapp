@@ -6,6 +6,7 @@ import DynamicPlot from "./DynamicPlot";
 
 type Chart = {
   id: string;
+  dataType: number;
 };
 
 type LayoutItem = {
@@ -25,34 +26,86 @@ const cardStyle: React.CSSProperties = {
   position: "relative",
 };
 
-function Telematry() {
-  const { width, containerRef, mounted } = useContainerWidth();
-  // adding id of new charts
-  const [charts, setCharts] = useState<Chart[]>([
-    { id: "a" },
-    { id: "b" },
-    { id: "c" },
-  ]);
+const dataTypeList = [
+  { name: "1", value: 1 },
+  { name: "2", value: 2 },
+];
 
-  // maps id to position of item on the viewport
-  const [layout, setLayout] = useState<LayoutItem[]>([
+// pull from localstorage if pst chart if saved
+function getInitialCharts(): Chart[] {
+  const oldChart = localStorage.getItem("charts");
+  // old chart exist
+  if (oldChart) {
+    return JSON.parse(oldChart);
+  }
+
+  return [
+    { id: "a", dataType: 1 },
+    { id: "b", dataType: 1 },
+    { id: "c", dataType: 1 },
+  ];
+}
+
+// same idea as getInitialCharts()
+function getInitialLayout(): LayoutItem[] {
+  const oldLayout = localStorage.getItem("layout");
+
+  if (oldLayout) {
+    return JSON.parse(oldLayout);
+  }
+
+  return [
     { i: "a", x: 0, y: 0, w: 4, h: 5 },
     { i: "b", x: 4, y: 0, w: 4, h: 5 },
     { i: "c", x: 8, y: 0, w: 4, h: 5 },
-  ]);
+  ];
+}
 
-  // add a chart and set id to curren time
+function Telematry() {
+  const { width, containerRef, mounted } = useContainerWidth();
+
+  // adding id of new charts
+  const [charts, setCharts] = useState<Chart[]>(getInitialCharts);
+
+  // maps id to position of item on the viewport
+  const [layout, setLayout] = useState<LayoutItem[]>(getInitialLayout);
+
+  const saveCharts = (updater: (prev: Chart[]) => Chart[]) => {
+    setCharts((prev) => {
+      const next = updater(prev);
+      localStorage.setItem("charts", JSON.stringify(next));
+      return next;
+    });
+  };
+
+  const saveLayout = (
+    updater: LayoutItem[] | ((prev: LayoutItem[]) => LayoutItem[]),
+  ) => {
+    setLayout((prev) => {
+      const next = typeof updater === "function" ? updater(prev) : updater;
+      localStorage.setItem("layout", JSON.stringify(next));
+      return next;
+    });
+  };
+
+  // add a chart and set id to current time
   const addChart = () => {
     const id = String(Date.now());
     const col = (charts.length * 4) % 12;
-    setCharts((prev) => [...prev, { id }]);
-    setLayout((prev) => [...prev, { i: id, x: col, y: Infinity, w: 4, h: 5 }]);
+    saveCharts((prev) => [...prev, { id, dataType: 1 }]);
+    saveLayout((prev) => [...prev, { i: id, x: col, y: Infinity, w: 4, h: 5 }]);
+  };
+
+  const updateChartType = (id: string, dataType: number) => {
+    saveCharts((prev) =>
+      prev.map((c) => (c.id === id ? { ...c, dataType } : c)),
+    );
   };
 
   // remove a charts from the set
   const removeChart = (id: string) => {
-    setCharts((prev) => prev.filter((c) => c.id !== id));
-    setLayout((prev) => prev.filter((item) => item.i !== id));
+    saveCharts((prev) => prev.filter((c) => c.id !== id));
+    saveLayout((prev) => prev.filter((item) => item.i !== id));
   };
 
   return (
@@ -70,7 +123,7 @@ function Telematry() {
             layout={layout}
             width={width}
             gridConfig={{ cols: 12, rowHeight: 80 }}
-            onLayoutChange={(newLayout) => setLayout([...newLayout])}
+            onLayoutChange={(newLayout) => saveLayout([...newLayout])}
           >
             {charts.map((chart) => (
               <div key={chart.id} style={cardStyle}>
@@ -90,7 +143,20 @@ function Telematry() {
                 >
                   remove
                 </button>
-                <DynamicPlot />
+
+                {/* Dynamic Plot graphs spacific data type */}
+                <DynamicPlot dataType={chart.dataType} />
+                {/* Selection for changing type of chart*/}
+                <select
+                  style={{ position: "absolute", left: "40%", bottom: "5%" }}
+                  onChange={(e) => {
+                    updateChartType(chart.id, parseInt(e.target.value));
+                  }}
+                >
+                  {dataTypeList.map((aDataType) => (
+                    <option value={aDataType.value}>{aDataType.name}</option>
+                  ))}
+                </select>
               </div>
             ))}
           </ReactGridLayout>

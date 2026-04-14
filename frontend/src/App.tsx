@@ -8,20 +8,22 @@ import TestSecure from "./Components/TestSecure";
 import Convert from "./Components/Convert";
 import DynamicPlot from "./Components/DynamicPlot";
 import Telematry from "./Components/Telematry";
+import { DarkModeProvider } from "./context/DarkModeContaxt";
 
 function App() {
   return (
     <div className="App">
-      <Nave />
-      <Routes>
-        <Route path="/secure-test" element={<TestSecure />} />
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/convert" element={<Convert />} />
-        <Route path="/dynamic" element={<DynamicPlot />} />
-        <Route path="/telematry" element={<Telematry />} />
-      </Routes>
+      <DarkModeProvider>
+        <Nave />
+        <Routes>
+          <Route path="/secure-test" element={<TestSecure />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/convert" element={<Convert />} />
+          <Route path="/telematry" element={<Telematry />} />
+        </Routes>
+      </DarkModeProvider>
     </div>
   );
 }

@@ -24,6 +24,20 @@ a:hover {
 }
 
 body {
+  background-color: #fafafa;
+  color: #050505;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  display: block;
+  /* place-items: center; */
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+body.dark {
+  background-color: #1a1a1a;
+  color: #fafafa;
   margin: 0;
   padding: 0;
   overflow-x: hidden;

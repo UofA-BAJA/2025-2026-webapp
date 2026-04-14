@@ -12,10 +12,12 @@ down:
 
 up:
 	@# run python script in background and save process ID to a file
+	@# kill .pid just in case it is running based on control + c  exit
 	python3 ./tools/timeseries_stream.py --serve & echo $$! > python_stream.pid
 	docker compose --env-file .env up -d
 
 watch:
+	python3 ./tools/timeseries_stream.py --serve & echo $$! > python_stream.pid
 	docker compose up --watch
 	
 build:
