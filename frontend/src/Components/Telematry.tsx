@@ -3,6 +3,7 @@ import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 import { useState, type RefObject } from "react";
 import DynamicPlot from "./DynamicPlot";
+import { useDarkMode } from "../context/DarkModeContaxt";
 
 type Chart = {
   id: string;
@@ -63,6 +64,7 @@ function getInitialLayout(): LayoutItem[] {
 
 function Telematry() {
   const { width, containerRef, mounted } = useContainerWidth();
+  const { darkMode } = useDarkMode();
 
   // adding id of new charts
   const [charts, setCharts] = useState<Chart[]>(getInitialCharts);
@@ -134,6 +136,7 @@ function Telematry() {
                     top: 8,
                     right: 8,
                     background: "none",
+                    color: darkMode ? "white" : "black",
                     border: "none",
                     cursor: "pointer",
                     fontSize: 16,
@@ -149,6 +152,7 @@ function Telematry() {
                 {/* Selection for changing type of chart*/}
                 <select
                   style={{ position: "absolute", left: "40%", bottom: "5%" }}
+                  value={chart.dataType}
                   onChange={(e) => {
                     updateChartType(chart.id, parseInt(e.target.value));
                   }}
