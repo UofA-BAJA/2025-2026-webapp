@@ -27,9 +27,16 @@ const cardStyle: React.CSSProperties = {
   position: "relative",
 };
 
+/*
+{
+	data_type: number
+	data: array or float 
+	ts: float
+}
+*/
 const dataTypeList = [
-  { name: "1", value: 1 },
-  { name: "2", value: 2 },
+  { data_type: "1", data: 1 },
+  { data_type: "2", data: 2 },
 ];
 
 // pull from localstorage if pst chart if saved
@@ -158,7 +165,9 @@ function Telematry() {
                   }}
                 >
                   {dataTypeList.map((aDataType) => (
-                    <option value={aDataType.value}>{aDataType.name}</option>
+                    <option value={aDataType.data}>
+                      {aDataType.data_type}
+                    </option>
                   ))}
                 </select>
               </div>

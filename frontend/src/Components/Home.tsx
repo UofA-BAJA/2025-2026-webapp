@@ -139,62 +139,73 @@ function Home() {
   }, []);
 
   return (
-    <div className="Home">
-      <div>
-        <a
-          href="https://github.com/UofA-BAJA/2025-2026-firmware/tree/main"
-          target="_blank"
-        >
-          <img src="/baja_logo.jpg" className="logo" alt="Baja logo" />
-        </a>
-      </div>
-      {/* Echarts test */}
+    <div
+      className="Home"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        width: "100vw",
+        textAlign: "center",
+        gap: "20px",
+      }}
+    >
+      {/* Scatter Plot */}
       <div>
         <ScatterPlot />
       </div>
-      <h1>Temperature Data</h1>
 
-      <BarChart width={500} height={300} data={temps}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="beltId" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-        <Bar dataKey="value" fill="#8884d8" />
-      </BarChart>
+      {/* Title */}
+      <h1>PostgreSQL Data</h1>
 
+      {/* Bar Chart */}
       <div>
-        <form onSubmit={createBelt}>
-          <label htmlFor="belt">Belt Name: </label>
-          <input
-            type="text"
-            id="belt"
-            value={beltName}
-            onChange={(e) => setBeltName(e.target.value)}
-          />
-          <button type="submit">Add belt</button>
-        </form>
+        <BarChart width={500} height={300} data={temps}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="beltId" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="value" fill="#8884d8" />
+        </BarChart>
       </div>
 
-      <div>
-        <form onSubmit={createTemp}>
-          <label htmlFor="tempValue">Temp value: </label>
+      {/* Add Belt Form */}
+      <form onSubmit={createBelt}>
+        <label htmlFor="belt">Belt Name: </label>
+        <input
+          type="text"
+          id="belt"
+          value={beltName}
+          onChange={(e) => setBeltName(e.target.value)}
+        />
+        <button type="submit">Add Belt</button>
+      </form>
+
+      {/* Add Temp Form */}
+      <form onSubmit={createTemp}>
+        <div>
+          <label htmlFor="tempValue">Temp Value: </label>
           <input
             type="number"
             id="tempValue"
             value={tempValue}
             onChange={(e) => setTempValue(parseInt(e.target.value))}
+            style={{ margin: "5px" }}
           />
-          <label htmlFor="beltRef">Belt Refrence: </label>
+
+          <label htmlFor="beltRef">Belt Reference: </label>
           <input
             type="number"
             id="beltRef"
             value={beltRef}
             onChange={(e) => setTempRef(parseInt(e.target.value))}
+            style={{ margin: "5px" }}
           />
-          <button type="submit">Add Temp</button>
-        </form>
-      </div>
+        </div>
+
+        <button type="submit">Add Temp</button>
+      </form>
     </div>
   );
 }

@@ -25,6 +25,16 @@ function Nave() {
         position: "relative",
       }}
     >
+      {/* Logo */}
+      <div style={{ position: "absolute", left: "50px", top: "10px" }}>
+        <a
+          href="https://github.com/UofA-BAJA/2025-2026-firmware/tree/main"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <img src="/baja_logo.jpg" className="logo" alt="Baja logo" />
+        </a>
+      </div>
       <Link to="/" style={ankerStyle}>
         Home
       </Link>

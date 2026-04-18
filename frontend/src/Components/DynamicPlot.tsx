@@ -20,7 +20,7 @@ export default function DynamicPlot({ dataType }: dataTypeId) {
   const dataRef = useRef<Point[]>([]);
 
   useEffect(() => {
-    dataRef.current = []; 
+    dataRef.current = [];
     const handler = (e: MessageEvent) => {
       // read the data
       const data = JSON.parse(e.data);
