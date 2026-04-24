@@ -23,7 +23,8 @@ watch:
 build:
 	docker compose up --build -d
 	@# run python script in background and save process ID to a file
-	python3 ./tools/timeseries_stream.py --serve & echo $$! > python_stream.pid
+	@#python3 radio_to_json.py --serial_port /dev/tty.usbserial-0001 & echo $$! > python_stream.pid
+	@#python ./tools/mock_server.py
 
 reset:
 	docker compose down

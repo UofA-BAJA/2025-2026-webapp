@@ -35,8 +35,8 @@ const cardStyle: React.CSSProperties = {
 }
 */
 const dataTypeList = [
-  { data_type: "1", data: 1 },
   { data_type: "2", data: 2 },
+  { data_type: "8", data: 8 },
 ];
 
 // pull from localstorage if pst chart if saved
@@ -48,9 +48,9 @@ function getInitialCharts(): Chart[] {
   }
 
   return [
-    { id: "a", dataType: 1 },
-    { id: "b", dataType: 1 },
-    { id: "c", dataType: 1 },
+    { id: "a", dataType: 8 },
+    { id: "b", dataType: 2 },
+    { id: "c", dataType: 2 },
   ];
 }
 
@@ -165,7 +165,7 @@ function Telematry() {
                   }}
                 >
                   {dataTypeList.map((aDataType) => (
-                    <option value={aDataType.data}>
+                    <option key={aDataType.data} value={aDataType.data}>
                       {aDataType.data_type}
                     </option>
                   ))}

@@ -10,17 +10,12 @@ Modes:
 
 import json
 import time
-import math
-import random
 import argparse
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-import sys
 import struct
 
 import serial
-import serial.tools.list_ports
-from serial.serialutil import SerialException
 
 # ---------------------------------------------------------------------------
 # SSE server

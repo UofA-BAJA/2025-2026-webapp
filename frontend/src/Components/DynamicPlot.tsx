@@ -1,18 +1,32 @@
 import ReactECharts from "echarts-for-react";
 import { useEffect, useRef } from "react";
 
-type Point = [number | string | Date, number];
-// single point SSE Client
-const sse = new EventSource("http://localhost:8000/stream");
+type Point = [number, number];
+
 interface dataTypeId {
   dataType: number;
 }
 
 const baseOption = {
   animation: false,
-  xAxis: { type: "time" },
-  yAxis: { type: "value", scale: true, interval: 1, min: 0 },
-  series: [{ type: "line", showSymbol: false, data: [] }],
+  xAxis: {
+    type: "value",
+    scale: true,
+  },
+  yAxis: {
+    type: "value",
+    scale: true,
+    // gap between y axis from min and max so data no cramped
+    boundaryGap: ["30%", "30%"],
+  },
+  series: [
+    {
+      type: "line",
+      showSymbol: false, // no dots
+      smooth: false, // no smooth graph
+      data: [],
+    },
+  ],
 };
 
 export default function DynamicPlot({ dataType }: dataTypeId) {
@@ -21,26 +35,36 @@ export default function DynamicPlot({ dataType }: dataTypeId) {
 
   useEffect(() => {
     dataRef.current = [];
+    const sse = new EventSource("http://localhost:8000/stream");
+
     const handler = (e: MessageEvent) => {
-      // read the data
-      const data = JSON.parse(e.data);
-      if (data.dataType == dataType) {
-        // push the data to our current chart
-        console.log(data.timestamp)
-        dataRef.current.push([data.timestamp, data.value]);
-        // shift to only show 50 points at a time
-        if (dataRef.current.length > 50) {
-          dataRef.current.shift();
-        }
-        // update the full chart
-        chartRef.current?.getEchartsInstance()?.setOption({
-          series: [{ data: dataRef.current }],
-        });
-      }
+      const dataPacked = JSON.parse(e.data);
+      if (dataPacked.type !== dataType) return;
+
+      dataRef.current.push([dataPacked.ts, dataPacked.data[0]]);
+      if (dataRef.current.length > 50) dataRef.current.shift();
+
+      const instance = chartRef.current?.getEchartsInstance();
+      if (!instance) return;
+
+      const data = dataRef.current;
+      const xMin = data[0][0];
+      const xMax = data[data.length - 1][0];
+
+      instance.setOption(
+        {
+          xAxis: { min: xMin, max: xMax },
+          series: [{ type: "line", smooth: false, showSymbol: false, data }],
+        },
+        { replaceMerge: ["series"] },
+      );
     };
-    // each new instance does the action above on every message
+
     sse.addEventListener("message", handler);
-    return () => sse.removeEventListener("message", handler);
+    return () => {
+      sse.removeEventListener("message", handler);
+      sse.close();
+    };
   }, [dataType]);
 
   return (
