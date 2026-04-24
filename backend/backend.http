@@ -46,3 +46,20 @@ Content-Type: application/json
   "BeltId": 5,
   "Value": 88
 }
+
+### POST vehicle name and year
+POST http://localhost:5269/vehicle
+Content-Type: application/json
+
+{
+  "name": "Baja2025",
+  "competitionYear": 2025
+}
+
+### get all vehicle
+GET http://localhost:5269/api/vehicle
+Accept: application/json
+
+### get a vehicle by name
+GET http://localhost:5269/api/vehicle/Baja2026
+Accept: application/json

@@ -26,6 +26,7 @@ export default function DynamicPlot({ dataType }: dataTypeId) {
       const data = JSON.parse(e.data);
       if (data.dataType == dataType) {
         // push the data to our current chart
+        console.log(data.timestamp)
         dataRef.current.push([data.timestamp, data.value]);
         // shift to only show 50 points at a time
         if (dataRef.current.length > 50) {

@@ -23,7 +23,9 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 def generate_datapoint(t: float, noise: float = 0.5) -> dict:
     """Generate a single time series data point."""
-    timestamp = datetime.fromtimestamp(t, tz=timezone.utc).isoformat()
+    timestamp = (
+        datetime.fromtimestamp(t, tz=timezone.utc).isoformat()
+    )
     value = (
         10.0
         + 5.0 * math.sin(2 * math.pi * t / 60)  # 60-second sine wave

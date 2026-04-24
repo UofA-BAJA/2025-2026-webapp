@@ -13,6 +13,6 @@ public class Vehicle
 
     [Required]
     [Column("competition_year")]
-    public int CompetitionYear{ get; set;}
+    public int CompetitionYear { get; set; }
 
 }
