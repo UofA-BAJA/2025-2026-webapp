@@ -78,7 +78,7 @@
 
 import ReactECharts from "echarts-for-react";
 import { useEffect, useRef } from "react";
-import { DATA_TYPE_MAP, type DataTypeKey } from "../types/dataTypes";
+import type { DataTypeKey } from "../types/dataTypes";
 
 type Point = [number, number];
 
@@ -98,7 +98,6 @@ export default function DynamicPlot({ dataType }: DynamicPlotProps) {
   const dataRef = useRef<Point[]>([]);
 
   useEffect(() => {
-    const { typeCode, fieldIndex } = DATA_TYPE_MAP[dataType];
     dataRef.current = [];
 
     const sse = new EventSource("http://localhost:8000/stream");
@@ -106,10 +105,10 @@ export default function DynamicPlot({ dataType }: DynamicPlotProps) {
     const handler = (e: MessageEvent) => {
       const packet = JSON.parse(e.data);
 
-      // Filter by numeric typeCode, then pick the right field from data[]
-      if (packet.type !== typeCode) return;
+      // Skip frames that don't contain the field we care about
+      if (!(dataType in packet)) return;
 
-      const value: number = packet.data[fieldIndex];
+      const value: number = packet[dataType];
       dataRef.current.push([packet.ts, value]);
       if (dataRef.current.length > 50) dataRef.current.shift();
 
@@ -133,7 +132,7 @@ export default function DynamicPlot({ dataType }: DynamicPlotProps) {
       sse.removeEventListener("message", handler);
       sse.close();
     };
-  }, [dataType]); // re-subscribe whenever the key changes
+  }, [dataType]);
 
   return (
     <ReactECharts
