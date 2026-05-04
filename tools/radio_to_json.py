@@ -1,237 +1,248 @@
-
 #!/usr/bin/env python3
 """
-Generates a JSON stream of simple time series data.
-
-Modes:
-  stdout      — print NDJSON to stdout (original behaviour)
-  serve       — run an SSE HTTP server at http://localhost:<port>/stream
+Reads binary packets from a serial port and streams them as JSON
+via Server-Sent Events at http://localhost:<port>/stream.
 """
 
-import json
-import time
 import argparse
-from datetime import datetime, timezone
-from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+import json
 import struct
+import time
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from enum import IntEnum
 
 import serial
 
+
+DELIMITER = 0xAAAAAAAA
+PACKET_HEADER_SIZE = 3   # header (1) + rssi (1) + reserved (1)
+FRAME_HEADER_SIZE  = 6   # id (1) + timestamp (4) + length (1)
+
+
+class DataType(IntEnum):
+    WHEEL_RPM          = 0x01
+    CAR_STATE          = 0x02
+    MOTOR_RPM          = 0x03
+    IMU_ROTATION       = 0x04
+    IMU_ACCELERATION   = 0x05
+    BRAKE_PRESSURE     = 0x06
+    SHOCK_DISPLACEMENT = 0x07
+    CVT_TEMPERATURE    = 0x08
+    GPS_POSITION       = 0x09
+    ERRORS             = 0xAA
+
+FRAME_FIELDS: dict[DataType, tuple[str, ...]] = {
+    DataType.WHEEL_RPM:          ("wheel_rpm_front_left", "wheel_rpm_front_right", "wheel_rpm_rear"),
+    DataType.CAR_STATE:          ("car_state_distance", "car_state_speed"),
+    DataType.MOTOR_RPM:          ("motor_rpm",),
+    DataType.IMU_ROTATION:       ("imu_rotation_x", "imu_rotation_y", "imu_rotation_z"),
+    DataType.IMU_ACCELERATION:   ("imu_acceleration_x", "imu_acceleration_y", "imu_acceleration_z"),
+    DataType.BRAKE_PRESSURE:     ("brake_pressure_front", "brake_pressure_rear"),
+    DataType.SHOCK_DISPLACEMENT: ("shock_displacement_front_left", "shock_displacement_front_right", "shock_displacement_rear_left", "shock_displacement_rear_right"),
+    DataType.CVT_TEMPERATURE:    ("cvt_temperature",),
+    DataType.GPS_POSITION:       ("gps_longitude", "gps_latitude", "gps_altitude"),
+    DataType.ERRORS:             ("error_code",),
+}
+
 # ---------------------------------------------------------------------------
-# SSE server
+# Packet parsing
 # ---------------------------------------------------------------------------
 
+class PacketError(Exception):
+    pass
 
-def make_handler(args, ser):
-    """Return an HTTP request handler class closed over CLI args."""
+class PacketParser:
+    """Parses raw binary packets into a list of JSON-serialisable dicts."""
 
-    class SSEHandler(BaseHTTPRequestHandler):
+    def parse(self, packet: bytearray) -> list[dict]:
 
-        def log_message(self, format, *a):
-            # Suppress per-request noise; keep it clean.
-            pass
+        if len(packet) < PACKET_HEADER_SIZE:
+            raise PacketError(f"Packet too short: {len(packet)} bytes")
 
-        def send_cors_headers(self):
-            self.send_header("Access-Control-Allow-Origin", "*")
-            self.send_header("Access-Control-Allow-Methods", "GET, OPTIONS")
-            self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        header = packet[0]
+        rssi = int.from_bytes(packet[1:2], byteorder="big", signed=True)
 
-        def do_OPTIONS(self):
-            # Pre-flight CORS request from the browser.
-            self.send_response(204)
-            self.send_cors_headers()
-            self.end_headers()
+        if len(packet) == 3:
+            return [{"header": header, "rssi": rssi}]
 
-        def do_GET(self):
-            if self.path != "/stream":
-                self.send_response(404)
-                self.end_headers()
-                self.wfile.write(b"Not found. Use /stream")
-                return
+        return [
+            {
+                "header": header,
+                "rssi": rssi,
+                **frame
+            }
+            for frame in self._iter_frames(packet, offset=PACKET_HEADER_SIZE)
+        ]
 
-            self.send_response(200)
-            self.send_header("Content-Type", "text/event-stream")
-            self.send_header("Cache-Control", "no-cache")
-            self.send_header("X-Accel-Buffering", "no")  # disable nginx buffering
-            self.send_cors_headers()
-            self.end_headers()
+    def _iter_frames(self, packet: bytearray, offset: int):
+        while offset < len(packet):
+            if offset + FRAME_HEADER_SIZE > len(packet):
+                raise PacketError(
+                    f"Truncated frame header at offset {offset}: "
+                    f"need {FRAME_HEADER_SIZE} bytes, have {len(packet) - offset}"
+                )
+            
+            raw_id = packet[offset]
+            timestamp = struct.unpack_from("<f", packet, offset + 1)[0]
+            length = packet[offset + 5]
 
-            def emit(point: dict):
-                """Write one SSE event to the response."""
-                line = f"data: {json.dumps(point)}\n\n"
-                self.wfile.write(line.encode())
-                self.wfile.flush()
-
+            # --- resolve type ---
             try:
-                
-                    prev_4 = 0x00000000
+                data_type = DataType(raw_id)
+            except ValueError:
+                raise PacketError(f"Unknown data type 0x{raw_id:02X} at offset {offset}")
 
-                    # Phase 1: Find first delimeter
-                    while True:
-                        if ser.in_waiting > 0:
-                            byte = ser.read(1)[0]
+            # --- validate payload length against schema ---
+            fields          = FRAME_FIELDS[data_type]
+            expected_length = len(fields) * 4   # every field is one 32-bit value
+            if length != expected_length:
+                raise PacketError(
+                    f"{data_type.name} at offset {offset}: "
+                    f"expected {expected_length} payload bytes, got {length}"
+                )
+            
+            # --- validate enough bytes remain ---
+            payload_start = offset + FRAME_HEADER_SIZE
+            payload_end   = payload_start + length
+            if payload_end > len(packet):
+                raise PacketError(
+                    f"Truncated payload for {data_type.name} at offset {offset}: "
+                    f"need {length} bytes, have {len(packet) - payload_start}"
+                )
+    
 
-                            prev_4 = (prev_4 << 8) | byte
-                            prev_4 &= 0xFFFFFFFF
+            # --- unpack payload ---
+            if data_type == DataType.ERRORS:
+                values = struct.unpack_from("<I", packet, payload_start)   # uint32
+            else:
+                values = struct.unpack_from(f"<{len(fields)}f", packet, payload_start)
 
-                            if prev_4 == 0xAAAAAAAA:
-                                # Found first delimeter!
-                                break
+            yield {"ts": timestamp, **dict(zip(fields, values))}
 
-                    packet = bytearray()
-
-                    # Phase 2: Read data
-                    while True:
-                        if ser.in_waiting > 0:
-                            byte = ser.read(1)[0]
-
-
-                            packet.append(byte)
-
-                            prev_4 = (prev_4 << 8) | byte
-                            prev_4 &= 0xFFFFFFFF
-
-                            if prev_4 == 0xAAAAAAAA:
-                                packet = packet[:-4]
-                                # Packet complete: parse it and convert to JSON
-                                json_data = parse_packet(packet)
-
-                                for entry in json_data:
-                                    emit(entry)
-                                # Send json over web socket
-
-                                packet = bytearray()
-
-
-
-            except (BrokenPipeError, ConnectionResetError):
-                pass  # client disconnected — that's fine
-
-    return SSEHandler
-
-
-def run_server(args, ser):
-    host = "localhost"
-    port = args.port
-    handler = make_handler(args, ser)
-    server = ThreadingHTTPServer((host, port), handler)
-    print(f"SSE server running at http://{host}:{port}/stream")
-    print("Press Ctrl-C to stop.")
-    try:
-        server.serve_forever()
-    except KeyboardInterrupt:
-        print("\nStopped.")
-
-
-def parse_packet(packet):
-
-
-    header = packet[0]
-    rssi = int.from_bytes(packet[1:2], byteorder='big', signed=True)
-    if(len(packet) == 3):
-        return [{
-            "header": header,
-            "rssi": rssi
-        }]
-
-    json_arr = []
-
-    frame_start = 3
-    while (frame_start < len(packet)):
-        id = packet[frame_start]
-        ts = struct.unpack('<f', packet[frame_start + 1: frame_start + 5])[0]
-        length = packet[frame_start + 5]
-
-        data = []
-        frame_increment = 0
-        for i in range((length // 4)):
-            idx = frame_start + 6 + (4 * i)
-            data.append(struct.unpack('<f', packet[idx: idx + 4])[0])
-            frame_increment += 4
-
-        frame_start += 1
-        frame_start += 4
-        frame_start += 1
-        frame_start += frame_increment
-
-        json_arr.append({
-            "header": header,
-            "rssi": rssi,
-            "type": id,
-            "ts": ts,
-            "data": data
-            })
-
-    return json_arr
-
-
-
-def read_port(ser):
-
-    prev_4 = 0x00000000
-
-    # Phase 1: Find first delimeter
-    while True:
-        if ser.in_waiting > 0:
-            byte = ser.read(1)[0]
-
-            prev_4 = (prev_4 << 8) | byte
-            prev_4 &= 0xFFFFFFFF
-
-            if prev_4 == 0xAAAAAAAA:
-                # Found first delimeter!
-                break
-
-    packet = bytearray()
-
-    # Phase 2: Read data
-    while True:
-        if ser.in_waiting > 0:
-            byte = ser.read(1)[0]
-
-
-            packet.append(byte)
-
-            prev_4 = (prev_4 << 8) | byte
-            prev_4 &= 0xFFFFFFFF
-
-            if prev_4 == 0xAAAAAAAA:
-                packet = packet[:-4]
-                # Packet complete: parse it and convert to JSON
-                json = parse_packet(packet)
-
-                # Send json over web socket
-
-                packet = bytearray()
+            offset = payload_end
 
 
 # ---------------------------------------------------------------------------
-# CLI
+# Serial reader
 # ---------------------------------------------------------------------------
 
+class SerialReader:
+    """Yields complete packets read from a serial port."""
+
+    def __init__(self, port: serial.Serial):
+        self._port = port
+
+    def packets(self):
+        """Infinite generator; yields one bytearray per complete packet."""
+        self._sync()
+        buf = bytearray()
+        trailing = 0
+
+        while True:
+
+            byte = self._port.read(1)[0]
+            buf.append(byte)
+            trailing = ((trailing << 8) | byte) & 0xFFFFFFFF
+
+            if trailing == DELIMITER:
+                yield buf[:-4]   # strip the delimiter that closed the packet
+                buf = bytearray()
+                trailing = 0
+
+    def _sync(self):
+        """Discard bytes until the first delimiter is found."""
+        trailing = 0
+        while trailing != DELIMITER:
+            if self._port.in_waiting:
+                byte = self._port.read(1)[0]
+                trailing = ((trailing << 8) | byte) & 0xFFFFFFFF
+
+
+# ---------------------------------------------------------------------------
+# SSE HTTP server
+# ---------------------------------------------------------------------------
+
+class SSEHandler(BaseHTTPRequestHandler):
+
+    # Injected by SSEServer before the server starts.
+    serial_reader: SerialReader = None
+    packet_parser: PacketParser = None
+
+    def log_message(self, fmt, *args):
+        pass  # suppress per-request noise
+
+    def do_OPTIONS(self):
+        self.send_response(204)
+        self._send_cors_headers()
+        self.end_headers()
+
+    def do_GET(self):
+        if self.path != "/stream":
+            self.send_response(404)
+            self.end_headers()
+            self.wfile.write(b"Not found. Use /stream")
+            return
+
+        self.send_response(200)
+        self.send_header("Content-Type", "text/event-stream")
+        self.send_header("Cache-Control", "no-cache")
+        self.send_header("X-Accel-Buffering", "no")
+        self._send_cors_headers()
+        self.end_headers()
+
+        try:
+            for packet in self.serial_reader.packets():
+                for point in self.packet_parser.parse(packet):
+                    self._emit(point)
+        except (BrokenPipeError, ConnectionResetError):
+            pass  # client disconnected — that's fine
+
+    def _emit(self, point: dict):
+        self.wfile.write(f"data: {json.dumps(point)}\n\n".encode())
+        self.wfile.flush()
+
+    def _send_cors_headers(self):
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+
+
+class SSEServer:
+    def __init__(self, host: str, port: int, reader: SerialReader, parser: PacketParser):
+        # Inject dependencies into the handler class before the server starts.
+        SSEHandler.serial_reader = reader
+        SSEHandler.packet_parser = parser
+
+        self._server = ThreadingHTTPServer((host, port), SSEHandler)
+        self._url = f"http://{host}:{port}/stream"
+
+    def serve(self):
+        print(f"SSE server running at {self._url}")
+        print("Press Ctrl-C to stop.")
+        try:
+            self._server.serve_forever()
+        except KeyboardInterrupt:
+            print("\nStopped.")
+
+
+# ---------------------------------------------------------------------------
+# Entry point
+# ---------------------------------------------------------------------------
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Stream time series data as NDJSON (stdout) or SSE (HTTP server)."
+        description="Stream serial packet data as SSE JSON."
     )
-    parser.add_argument(
-        "--port",
-        type=int,
-        default=8000,
-        help="Port for the SSE server (default: 8000, only used with --serve)",
-    )
-    parser.add_argument(
-        "--serial_port",
-        type=str,
-        default="/dev/ttyUSB0",
-    )
+    parser.add_argument("--port",        type=int, default=8000)
+    parser.add_argument("--serial_port", type=str, default="/dev/ttyUSB0")
     args = parser.parse_args()
 
     ser = serial.Serial(args.serial_port, 115200, timeout=1)
-    time.sleep(2)
+    time.sleep(2)  # let the device settle
 
-    run_server(args, ser)
-
+    reader = SerialReader(ser)
+    packet_parser = PacketParser()
+    SSEServer("localhost", args.port, reader, packet_parser).serve()
 
 
 if __name__ == "__main__":
