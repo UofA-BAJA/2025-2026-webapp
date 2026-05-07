@@ -10,7 +10,7 @@ import struct
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from enum import IntEnum
-
+import threading
 import serial
 
 
@@ -131,8 +131,23 @@ class SerialReader:
 
     def __init__(self, port: serial.Serial):
         self._port = port
+        self._running = False
+        self._latest_packet = bytearray()
+        self._packet_event = threading.Event()  # <-- add this
 
     def packets(self):
+
+        if not self._running:
+            self._running = True
+            t = threading.Thread(target=self.packet_producer, daemon=True)
+            t.start()
+
+        while True:
+            self._packet_event.wait()       # blocks until producer calls .set()
+            self._packet_event.clear()      # reset for the next packet
+            yield self._latest_packet
+
+    def packet_producer(self):
         """Infinite generator; yields one bytearray per complete packet."""
         self._sync()
         buf = bytearray()
@@ -145,7 +160,10 @@ class SerialReader:
             trailing = ((trailing << 8) | byte) & 0xFFFFFFFF
 
             if trailing == DELIMITER:
-                yield buf[:-4]   # strip the delimiter that closed the packet
+                self._latest_packet = buf[:-4]
+                self._packet_event.set()
+                # signal all of the things waiting for this
+                # yield buf[:-4]   # strip the delimiter that closed the packet
                 buf = bytearray()
                 trailing = 0
 
@@ -189,6 +207,7 @@ class SSEHandler(BaseHTTPRequestHandler):
         self.send_header("X-Accel-Buffering", "no")
         self._send_cors_headers()
         self.end_headers()
+
 
         try:
             for packet in self.serial_reader.packets():
