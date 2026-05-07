@@ -247,7 +247,7 @@ const cardStyle: React.CSSProperties = {
   height: "100%",
   border: "1px solid #ccc",
   borderRadius: 8,
-  padding: 12,
+  padding: 5,
   boxSizing: "border-box",
   position: "relative",
 };
@@ -329,8 +329,8 @@ export default function Telemetry() {
                   onClick={() => removeChart(chart.id)}
                   style={{
                     position: "absolute",
-                    top: 8,
-                    right: 8,
+                    top: 0,
+                    right: 0,
                     background: "none",
                     color: darkMode ? "white" : "black",
                     border: "none",
@@ -352,7 +352,7 @@ export default function Telemetry() {
 
                 {/* DataType selector — options come from the map automatically */}
                 <select
-                  style={{ position: "absolute", left: "30%", bottom: "5%" }}
+                  style={{ position: "absolute", left: "30%", bottom: "2%" }}
                   value={chart.dataType}
                   onChange={(e) =>
                     updateChartType(chart.id, e.target.value as DataTypeKey)

@@ -89,7 +89,7 @@ interface DynamicPlotProps {
 const BASE_OPTION = {
   animation: false,
   xAxis: { type: "value", scale: true },
-  yAxis: { type: "value", scale: true, boundaryGap: ["30%", "30%"] },
+  yAxis: { type: "value", scale: true, boundaryGap: ["20", "20%"] },
   series: [{ type: "line", showSymbol: false, smooth: false, data: [] }],
 } as const;
 
