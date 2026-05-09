@@ -47,8 +47,8 @@ function Nave() {
       <Link to="/convert" style={ankerStyle}>
         CSVConvert
       </Link>
-      <Link to="/telematry" style={ankerStyle}>
-        Telematry
+      <Link to="/telemetry" style={ankerStyle}>
+        Telemetry
       </Link>
 
       <button

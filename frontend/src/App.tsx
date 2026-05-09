@@ -6,8 +6,7 @@ import Nave from "./Components/Nave";
 import About from "./Components/About";
 import TestSecure from "./Components/TestSecure";
 import Convert from "./Components/Convert";
-import DynamicPlot from "./Components/DynamicPlot";
-import Telematry from "./Components/Telematry";
+import Telemetry from "./Components/Telemetry";
 import { DarkModeProvider } from "./context/DarkModeContaxt";
 
 function App() {
@@ -21,7 +20,7 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/convert" element={<Convert />} />
-          <Route path="/telematry" element={<Telematry />} />
+          <Route path="/telemetry" element={<Telemetry />} />
         </Routes>
       </DarkModeProvider>
     </div>
