@@ -26,10 +26,8 @@ function getInitialCharts(): Chart[] {
     const saved = localStorage.getItem("charts");
     if (saved) {
       const parsed: Chart[] = JSON.parse(saved);
-      // Discard cache if any entry has a dataType not in the map
       const isValid = parsed.every((c) => c.dataType in DATA_TYPE_MAP);
       if (isValid) return parsed;
-      // Stale format detected — wipe both keys together
       localStorage.removeItem("charts");
       localStorage.removeItem("layout");
     }
@@ -56,23 +54,22 @@ function getInitialLayout(): LayoutItem[] {
   ];
 }
 
-// Dropdown options (derived from the map — no manual list to maintain)
 const DATA_TYPE_OPTIONS = Object.entries(DATA_TYPE_MAP) as [
   DataTypeKey,
   (typeof DATA_TYPE_MAP)[DataTypeKey],
 ][];
 
-// Card style
 const cardStyle: React.CSSProperties = {
   height: "100%",
   border: "1px solid #ccc",
   borderRadius: 8,
-  padding: 5,
+  padding: "10px 10px 8px 10px",
   boxSizing: "border-box",
   position: "relative",
+  display: "flex",
+  flexDirection: "column",
 };
 
-// Component
 export default function Telemetry() {
   const { width, containerRef, mounted } = useContainerWidth();
   const { darkMode } = useDarkMode();
@@ -80,7 +77,6 @@ export default function Telemetry() {
   const [charts, setCharts] = useState<Chart[]>(getInitialCharts);
   const [layout, setLayout] = useState<LayoutItem[]>(getInitialLayout);
 
-  // Persist helpers
   const saveCharts = (updater: (prev: Chart[]) => Chart[]) => {
     setCharts((prev) => {
       const next = updater(prev);
@@ -99,11 +95,9 @@ export default function Telemetry() {
     });
   };
 
-  // CRUD
   const addChart = () => {
     const id = String(Date.now());
     const col = (charts.length * 4) % 12;
-    // Default new charts to the first key in the map
     const defaultType = DATA_TYPE_OPTIONS[0][0];
     saveCharts((prev) => [...prev, { id, dataType: defaultType }]);
     saveLayout((prev) => [...prev, { i: id, x: col, y: Infinity, w: 4, h: 5 }]);
@@ -120,7 +114,6 @@ export default function Telemetry() {
     saveLayout((prev) => prev.filter((item) => item.i !== id));
   };
 
-  // Render
   return (
     <div style={{ padding: 16 }}>
       <div style={{ marginBottom: 16 }}>
@@ -158,36 +151,37 @@ export default function Telemetry() {
                   ✕
                 </button>
 
-                {/* Chart title derived from the map */}
-                <div
-                  style={{
-                    fontSize: 12,
-                    marginBottom: 4,
-                    marginLeft: 10,
-                    marginTop: 10,
-                    fontWeight: 600,
-                  }}
-                >
+                {/* Title */}
+                <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 4 }}>
                   {DATA_TYPE_MAP[chart.dataType].label}
                 </div>
 
-                {/* The plot — receives a string key, not a magic number */}
-                <DynamicPlot dataType={chart.dataType} />
+                {/* Plot — fills all remaining vertical space */}
+                <div style={{ flex: 1, minHeight: 0 }}>
+                  <DynamicPlot dataType={chart.dataType} />
+                </div>
 
-                {/* DataType selector — options come from the map automatically */}
-                <select
-                  style={{ position: "absolute", left: "30%", bottom: "2%" }}
-                  value={chart.dataType}
-                  onChange={(e) =>
-                    updateChartType(chart.id, e.target.value as DataTypeKey)
-                  }
+                {/* Select — sits below the plot with breathing room */}
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    paddingTop: 1,
+                  }}
                 >
-                  {DATA_TYPE_OPTIONS.map(([key, config]) => (
-                    <option key={key} value={key}>
-                      {config.label}
-                    </option>
-                  ))}
-                </select>
+                  <select
+                    value={chart.dataType}
+                    onChange={(e) =>
+                      updateChartType(chart.id, e.target.value as DataTypeKey)
+                    }
+                  >
+                    {DATA_TYPE_OPTIONS.map(([key, config]) => (
+                      <option key={key} value={key}>
+                        {config.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
             ))}
           </ReactGridLayout>

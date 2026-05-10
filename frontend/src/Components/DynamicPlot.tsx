@@ -11,7 +11,7 @@ interface DynamicPlotProps {
 const BASE_OPTION = {
   animation: false,
   xAxis: { type: "value", scale: true },
-  yAxis: { type: "value", scale: true, boundaryGap: ["20", "20%"] },
+  yAxis: { type: "value", scale: true },
   series: [{ type: "line", showSymbol: false, smooth: false, data: [] }],
 } as const;
 
@@ -27,7 +27,6 @@ export default function DynamicPlot({ dataType }: DynamicPlotProps) {
     const handler = (e: MessageEvent) => {
       const packet = JSON.parse(e.data);
 
-      // Skip frames that don't contain the field we care about
       if (!(dataType in packet)) return;
 
       const value: number = packet[dataType];
@@ -38,9 +37,18 @@ export default function DynamicPlot({ dataType }: DynamicPlotProps) {
       if (!instance) return;
 
       const pts = dataRef.current;
+      const ys = pts.map((p) => p[1]);
+      const minY = Math.min(...ys);
+      const maxY = Math.max(...ys);
+      const pad = (maxY - minY) * 0.2 || Math.abs(minY) * 0.2 || 1;
+
       instance.setOption(
         {
           xAxis: { min: pts[0][0], max: pts[pts.length - 1][0] },
+          yAxis: {
+            min: Math.floor(minY - pad),
+            max: Math.ceil(maxY + pad),
+          },
           series: [
             { type: "line", smooth: false, showSymbol: false, data: pts },
           ],
@@ -60,7 +68,7 @@ export default function DynamicPlot({ dataType }: DynamicPlotProps) {
     <ReactECharts
       ref={chartRef}
       option={BASE_OPTION}
-      style={{ height: "100%" }}
+      style={{ height: "100%"}}
     />
   );
 }
