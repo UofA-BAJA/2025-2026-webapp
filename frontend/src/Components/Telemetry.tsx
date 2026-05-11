@@ -5,6 +5,7 @@ import { useState, type RefObject } from "react";
 import DynamicPlot from "./DynamicPlot";
 import { useDarkMode } from "../context/DarkModeContaxt";
 import { DATA_TYPE_MAP, type DataTypeKey } from "../types/dataTypes";
+import CommandSender from "./CommandSender"
 
 // Types
 type Chart = {
@@ -117,7 +118,12 @@ export default function Telemetry() {
   return (
     <div style={{ padding: 16 }}>
       <div style={{ marginBottom: 16 }}>
+        <button >Send Command</button>
         <button onClick={addChart}>Add Plot</button>
+      </div>
+
+      <div>
+        <CommandSender></CommandSender>
       </div>
 
       <div

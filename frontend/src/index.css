@@ -83,3 +83,10 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.CommandSender{
+  height: 80%;
+  width: 300px;
+  background-color: #050505;
+  color: #f9f9f9;
+}
