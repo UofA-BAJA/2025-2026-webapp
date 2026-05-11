@@ -1,4 +1,4 @@
-.PHONY: clean up down reset watch
+.PHONY: clean up down reset watch build buildMock buildReal upReal upMock no_cache
 
 clean:
 	docker container prune -f
@@ -17,14 +17,37 @@ up:
 	docker compose --env-file .env up -d
 
 watch:
-	python3 ./tools/timeseries_stream.py --serve & echo $$! > python_stream.pid
 	docker compose up --watch
-	
+
+watchMock:
+	python ./tools/mock_server.py & echo $$! > python_stream.pid
+	docker compose up --watch	
+
 build:
 	docker compose up --build -d
 	@# run python script in background and save process ID to a file
 	@#python3 radio_to_json.py --serial_port /dev/tty.usbserial-0001 & echo $$! > python_stream.pid
 	@#python ./tools/mock_server.py
+
+buildMock:
+	docker compose up --build -d
+	@# run python script in background and save process ID to a file
+	python ./tools/mock_server.py & echo $$! > python_stream.pid
+
+buildReal:
+	docker compose up --build -d
+	@# run python script in background and save process ID to a file
+	python3 radio_to_json.py --serial_port /dev/tty.usbserial-0001 & echo $$! > python_stream.pid
+
+upReal:
+	docker compose --env-file .env up -d
+	@# run python script in background and save process ID to a file
+	python3 radio_to_json.py --serial_port /dev/tty.usbserial-0001 & echo $$! > python_stream.pid
+
+upMock:
+	docker compose --env-file .env up -d
+	@# run python script in background and save process ID to a file
+	python ./tools/mock_server.py & echo $$! > python_stream.pid
 
 reset:
 	docker compose down

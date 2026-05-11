@@ -14,6 +14,7 @@ const BASE_OPTION = {
   yAxis: { type: "value", scale: true },
   series: [{ type: "line", showSymbol: false, smooth: false, data: [] }],
 } as const;
+let RSSI = 1;
 
 export default function DynamicPlot({ dataType }: DynamicPlotProps) {
   const chartRef = useRef<ReactECharts | null>(null);
@@ -68,7 +69,7 @@ export default function DynamicPlot({ dataType }: DynamicPlotProps) {
     <ReactECharts
       ref={chartRef}
       option={BASE_OPTION}
-      style={{ height: "100%"}}
+      style={{ height: "100%" }}
     />
   );
 }
