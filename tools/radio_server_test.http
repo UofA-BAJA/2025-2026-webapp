@@ -1,0 +1,8 @@
+@rootURL = http://localhost:8000
+
+POST {{rootURL}}/command
+Content-Type: application/json
+
+{
+    "command": 11,
+}
