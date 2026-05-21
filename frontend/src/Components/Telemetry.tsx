@@ -7,6 +7,7 @@ import Rssi from "./Rssi";
 import { useDarkMode } from "../context/DarkModeContaxt";
 import { DATA_TYPE_MAP, type DataTypeKey } from "../types/dataTypes";
 import CommandSender from "./CommandSender"
+import "../index.css"
 
 // Types
 type Chart = {
@@ -72,6 +73,19 @@ const cardStyle: React.CSSProperties = {
   flexDirection: "column",
 };
 
+
+// I'm not really sure what type toggle is. I think it's a anonymous function or something
+const CommandToggle = ({ toggle } : any ) => {
+  return (
+    <div className = "command-toggle" onClick={toggle}>
+      <span/>
+      <span/>
+      <span/>
+    </div>
+  )
+}
+
+
 export default function Telemetry() {
   const { width, containerRef, mounted } = useContainerWidth();
   const { darkMode } = useDarkMode();
@@ -116,18 +130,22 @@ export default function Telemetry() {
     saveLayout((prev) => prev.filter((item) => item.i !== id));
   };
 
+  const [activeCommandSender, setActiveCommandSender] = useState(false);
+  const toggle = () => setActiveCommandSender(val => !val);
+
+
   //seEffect(getRSSI());
   return (
     <div style={{ padding: 16 }}>
-      <div style={{ marginBottom: 16 }}>
-        <button >Send Command</button>
+      <div style={{ marginBottom: 16, display: "flex" }}>
         <button onClick={addChart}>Add Plot</button>
-        <Rssi />
       </div>
 
-      <div>
-        <CommandSender></CommandSender>
+      <div id = "command-parent">
+        {activeCommandSender && <CommandSender/>}
+        <CommandToggle toggle = {toggle}/>
       </div>
+      <Rssi />
 
       <div
         ref={containerRef as RefObject<HTMLDivElement>}

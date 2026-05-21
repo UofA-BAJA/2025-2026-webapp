@@ -60,7 +60,7 @@ button {
   font-weight: 500;
   font-family: inherit;
   background-color: #1a1a1a;
-  cursor: pointer;
+  cursor: pointer;  background-color: #1a1a1a;
   transition: border-color 0.25s;
 }
 button:hover {
@@ -84,9 +84,50 @@ button:focus-visible {
   }
 }
 
-.CommandSender{
-  height: 80%;
-  width: 300px;
-  background-color: #050505;
-  color: #f9f9f9;
+#command-parent{
+  position: fixed;
+  left: 0;
+  top: 20%;
+  z-index: 10;
+  height: 600px;
+  display: flex;
 }
+
+.command-sender{
+  width: 400px;
+  border-radius: 0px 8px 0px 0px;
+  padding: 10px;
+  background-color: #1a1a1a;
+  color: #f9f9f9;
+  position: relative;
+}
+
+.command-sender button{
+  background-color: rgb(139, 190, 151);
+  margin: 5px;
+  color: black;
+}
+
+.command-sender select{
+  
+}
+
+.command-toggle{
+  cursor: pointer;
+  padding: 0.4rem;
+  border-radius: 0px 8px 8px 0px;
+  background-color: #1a1a1a;
+  position: absolute;
+  bottom: 0;
+  left: 100%;
+}
+
+.command-toggle span{
+  display: block;
+  background: #ffffff;
+  height: 4px;
+  width: 30px;
+  margin: 0.3rem 0;
+  border-radius: 8px;
+}
+
