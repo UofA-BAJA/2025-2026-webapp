@@ -2,18 +2,20 @@ import { useEffect, useState } from "react";
 
 let showRssiLevel = (rssi: number) => {
   if (rssi >= -30) {
-    return `[■■■■■■■■■□] ${rssi}`;
+    return `[■■■■■■■■■■] ${rssi}`;
   } else if (rssi >= -70) {
-    return `[■■■■■■■□□□] ${rssi}`;
-  } else if (rssi >= -100) {
-    return `[■■■■■□□□□□] ${rssi}`;
+    return `[■■■■■■□□□□] ${rssi}`;
+  } else if (rssi >= -80) {
+    return `[■■■□□□□□□□] ${rssi}`;
+  } else if (rssi >= -90) {
+    return `[■□□□□□□□□□] ${rssi}`;
   } else {
-    return `[■■□□□□□□□□] ${rssi}`;
+    return `[□□□□□□□□□□] No Connection`;
   }
 };
 
 export default function Rssi() {
-  const [rssi, setRssi] = useState(0);
+  const [rssi, setRssi] = useState(-1000);
 
   // get rssi and update value
   useEffect(() => {

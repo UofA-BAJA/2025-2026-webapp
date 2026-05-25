@@ -56,12 +56,13 @@ export default function MultiSelect({ options, placeholder = "Select…", onChan
 
   const label =
     selected.size === 0 ? placeholder
-    : selected.size === options.length ? "All selected"
-    : selected.size === 1 ? options.find(o => selected.has(o.value))?.label
-    : `${selected.size} selected`;
+      : selected.size === options.length ? "All selected"
+        : selected.size === 1 ? options.find(o => selected.has(o.value))?.label
+          : `${selected.size} selected`;
 
   return (
     <div ref={containerRef} style={{ position: "relative", width: 300 }}>
+
       <button onClick={() => setOpen(o => !o)}>
         {label} ▾
       </button>

@@ -9,6 +9,15 @@ interface DynamicPlotProps {
 }
 
 const BASE_OPTION = {
+  // Paddinng settings for the canvas graph
+  grid: {
+    left: '2%',
+    right: '2%',
+    top: '2%',
+    bottom: '4%',
+    containLabel: true
+  }
+  ,
   animation: false,
   xAxis: { type: "value", scale: true },
   yAxis: { type: "value", scale: true },
