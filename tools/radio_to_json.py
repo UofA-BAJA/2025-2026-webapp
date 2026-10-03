@@ -155,17 +155,20 @@ class SerialReader:
 
         while True:
 
-            byte = self._port.read(1)[0]
-            buf.append(byte)
-            trailing = ((trailing << 8) | byte) & 0xFFFFFFFF
+            tempBytesThing = self._port.read(1)
+            if len(tempBytesThing) > 0:
 
-            if trailing == DELIMITER:
-                self._latest_packet = buf[:-4]
-                self._packet_event.set()
-                # signal all of the things waiting for this
-                # yield buf[:-4]   # strip the delimiter that closed the packet
-                buf = bytearray()
-                trailing = 0
+                byte = tempBytesThing[0]
+                buf.append(byte)
+                trailing = ((trailing << 8) | byte) & 0xFFFFFFFF
+
+                if trailing == DELIMITER:
+                    self._latest_packet = buf[:-4]
+                    self._packet_event.set()
+                    # signal all of the things waiting for this
+                    # yield buf[:-4]   # strip the delimiter that closed the packet
+                    buf = bytearray()
+                    trailing = 0
 
     def _sync(self):
         """Discard bytes until the first delimiter is found."""
