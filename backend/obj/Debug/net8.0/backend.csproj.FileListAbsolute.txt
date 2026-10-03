@@ -1,0 +1,8 @@
+/home/matthew-ua/Baja/2025-2026-webapp/backend/obj/Debug/net8.0/backend.csproj.AssemblyReference.cache
+/home/matthew-ua/Baja/2025-2026-webapp/backend/obj/Debug/net8.0/backend.GeneratedMSBuildEditorConfig.editorconfig
+/home/matthew-ua/Baja/2025-2026-webapp/backend/obj/Debug/net8.0/backend.AssemblyInfoInputs.cache
+/home/matthew-ua/Baja/2025-2026-webapp/backend/obj/Debug/net8.0/backend.AssemblyInfo.cs
+/home/matthew-ua/Baja/2025-2026-webapp/backend/obj/Debug/net8.0/backend.csproj.CoreCompileInputs.cache
+/home/matthew-ua/Baja/2025-2026-webapp/backend/obj/Debug/net8.0/backend.MvcApplicationPartsAssemblyInfo.cs
+/home/matthew-ua/Baja/2025-2026-webapp/backend/obj/Debug/net8.0/backend.MvcApplicationPartsAssemblyInfo.cache
+/home/matthew-ua/Baja/2025-2026-webapp/backend/obj/Debug/net8.0/backend.sourcelink.json

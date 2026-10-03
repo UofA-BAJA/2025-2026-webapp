@@ -1,24 +1,62 @@
 import { Link } from "react-router-dom";
+import { useDarkMode } from "../context/DarkModeContaxt";
 
 function Nave() {
+  const { darkMode, toggleDarkMode } = useDarkMode();
+  const ankerStyle: React.CSSProperties = {
+    paddingRight: "5px",
+    textDecoration: "none",
+    color: darkMode ? "#fafafa" : "#1a1a1a",
+  };
   return (
     <nav
       style={{
         width: "100%",
-        backgroundColor: "#1a1a1a",
+        backgroundColor: darkMode ? "#1a1a1a" : "#fafafa",
         padding: "15px",
+        marginBottom: "30px",
         display: "flex",
+        alignItems: "center",
         justifyContent: "center",
         gap: "2rem",
-        position: "fixed",
         top: 0,
         left: 0,
         zIndex: 1000,
+        position: "relative",
       }}
     >
-      <Link to="/">Home</Link>
-      <Link to="/about">About</Link>
-      <Link to="/contact">Contact</Link>
+      {/* Logo */}
+      <div style={{ position: "absolute", left: "50px", top: "10px" }}>
+        <a
+          href="https://github.com/UofA-BAJA/2025-2026-firmware/tree/main"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <img src="/baja_logo.jpg" className="logo" alt="Baja logo" />
+        </a>
+      </div>
+      <Link to="/" style={ankerStyle}>
+        Home
+      </Link>
+      <Link to="/about" style={ankerStyle}>
+        About
+      </Link>
+      <Link to="/contact" style={ankerStyle}>
+        Contact
+      </Link>
+      <Link to="/convert" style={ankerStyle}>
+        CSVConvert
+      </Link>
+      <Link to="/telemetry" style={ankerStyle}>
+        Telemetry
+      </Link>
+
+      <button
+        onClick={toggleDarkMode}
+        style={{ position: "absolute", right: "50px" }}
+      >
+        {darkMode ? "Light" : "Dark"}
+      </button>
     </nav>
   );
 }

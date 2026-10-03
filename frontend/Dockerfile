@@ -1,4 +1,4 @@
-# Use the latest LTS version of Node.js
+# Use Node.js
 FROM node:20.19
  
 # Set the working directory inside the container

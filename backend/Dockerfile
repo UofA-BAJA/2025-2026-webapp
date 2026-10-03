@@ -14,4 +14,4 @@ EXPOSE 5269
 ENV PORT=5269
 
 # run the app 
-CMD ["dotnet", "run", "--urls", "http://0.0.0.0:5269"]
+CMD ["dotnet", "watch", "run", "--urls", "http://0.0.0.0:5269"]
